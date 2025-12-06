@@ -11,12 +11,13 @@ export interface JobConfig {
   challenge: string
   models: ModelId[]
   maxAttempts: number
+  debug?: boolean
 }
 
 export interface JobProgress {
   currentModel?: string
   currentAttempt?: number
-  phase?: 'generating' | 'writing' | 'testing' | 'benchmarking' | 'analyzing'
+  phase?: 'setup' | 'generating' | 'writing' | 'testing' | 'benchmarking' | 'analyzing'
   completedModels: string[]
   message?: string
 }

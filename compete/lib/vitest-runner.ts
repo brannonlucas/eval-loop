@@ -6,6 +6,7 @@ export interface TestResult {
   passed: boolean
   errors: string[]
   duration: number
+  rawOutput?: string // Full stdout+stderr when captureFullOutput is enabled
 }
 
 export interface BenchResult {
@@ -21,6 +22,8 @@ export interface TestRunOptions {
   workspacePath?: string
   /** Full path to the test file (overrides challenge-based lookup) */
   testFilePath?: string
+  /** Capture full stdout/stderr in result (for debug mode) */
+  captureFullOutput?: boolean
 }
 
 function findTestFile(challenge: string): string {
@@ -42,7 +45,7 @@ export async function runTests(
   options: TestRunOptions = {}
 ): Promise<TestResult> {
   return new Promise((resolve) => {
-    const { workspacePath, testFilePath } = options
+    const { workspacePath, testFilePath, captureFullOutput } = options
 
     // Determine test file path
     const specPath = testFilePath || findTestFile(challenge)
@@ -70,13 +73,15 @@ export async function runTests(
 
     proc.on('close', (code) => {
       const duration = Date.now() - startTime
+      const fullOutput = stdout + stderr
+      const rawOutput = captureFullOutput ? fullOutput : undefined
 
       if (code === 0) {
-        resolve({ passed: true, errors: [], duration })
+        resolve({ passed: true, errors: [], duration, rawOutput })
       } else {
         // Parse errors from output
-        const errors = parseTestErrors(stdout + stderr)
-        resolve({ passed: false, errors, duration })
+        const errors = parseTestErrors(fullOutput)
+        resolve({ passed: false, errors, duration, rawOutput })
       }
     })
 
@@ -85,6 +90,7 @@ export async function runTests(
         passed: false,
         errors: [`Failed to run tests: ${err.message}`],
         duration: Date.now() - startTime,
+        rawOutput: captureFullOutput ? `Error: ${err.message}` : undefined,
       })
     })
   })

@@ -11,6 +11,7 @@ export interface CompeteRequest {
   models?: ModelId[]
   maxAttempts?: number
   stream?: boolean
+  debug?: boolean // Enables debug artifacts: saves solutions, vitest output, preserves workspace
 }
 
 export interface CompeteResponse {
@@ -102,9 +103,11 @@ export type SSEEventType = 'progress' | 'result' | 'complete' | 'error'
 export interface ProgressEvent {
   model: string
   attempt: number
-  phase: 'generating' | 'writing' | 'testing' | 'benchmarking' | 'analyzing'
+  phase: 'setup' | 'generating' | 'writing' | 'testing' | 'benchmarking' | 'analyzing'
   message: string
   timestamp: number
+  debugArtifactsPath?: string // Path to debug artifacts when debug mode enabled
+  workspacePath?: string // Workspace path when debug mode enabled
 }
 
 export interface ResultEvent {

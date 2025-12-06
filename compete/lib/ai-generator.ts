@@ -76,14 +76,61 @@ export async function generateSolution(options: GenerateOptions): Promise<string
 }
 
 function extractCode(response: string): string {
+  // Strip any preamble text before code blocks
+  // LLMs often add "Here's the implementation..." before the code
+
   // Try to extract code from markdown code blocks
-  // Match tsx/ts/typescript/javascript code blocks
-  const tsxMatch = response.match(/```(?:tsx|typescript|ts|jsx|javascript|js)\n([\s\S]*?)```/)
-  if (tsxMatch) return tsxMatch[1].trim()
+  // Match tsx/ts/typescript/javascript code blocks (case-insensitive)
+  const codeBlockRegex = /```(?:tsx|typescript|ts|jsx|javascript|js)?\s*\n([\s\S]*?)```/i
+  const match = response.match(codeBlockRegex)
 
-  const genericMatch = response.match(/```\n([\s\S]*?)```/)
-  if (genericMatch) return genericMatch[1].trim()
+  if (match) {
+    const code = match[1].trim()
+    // Verify we got actual code, not just more markdown
+    if (code.length > 0 && !code.startsWith('```')) {
+      return code
+    }
+  }
 
-  // If no code blocks, assume the whole response is code
-  return response.trim()
+  // Try a more aggressive approach: find first code block regardless of language
+  const anyCodeBlock = response.match(/```\w*\s*\n([\s\S]*?)```/)
+  if (anyCodeBlock) {
+    const code = anyCodeBlock[1].trim()
+    if (code.length > 0) {
+      return code
+    }
+  }
+
+  // If no code blocks found, check if response starts with valid code indicators
+  const trimmed = response.trim()
+  const codeIndicators = [
+    /^(import|export|const|let|var|function|class|interface|type|async|\/\/|\/\*)/,
+  ]
+
+  for (const indicator of codeIndicators) {
+    if (indicator.test(trimmed)) {
+      // Looks like raw code, return as-is
+      return trimmed
+    }
+  }
+
+  // Last resort: if there's prose followed by code-like content, try to extract just the code
+  const lines = trimmed.split('\n')
+  let codeStartIndex = -1
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim()
+    if (/^(import|export|const|let|var|function|class|interface|type|\/\/|\/\*)/.test(line)) {
+      codeStartIndex = i
+      break
+    }
+  }
+
+  if (codeStartIndex > 0) {
+    // Found code after some prose - return just the code portion
+    return lines.slice(codeStartIndex).join('\n').trim()
+  }
+
+  // Fallback: return trimmed response
+  return trimmed
 }
