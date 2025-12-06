@@ -5,13 +5,14 @@
  */
 
 import { writeFile, mkdir } from 'fs/promises'
+import { existsSync } from 'fs'
 import { join } from 'path'
 import type { CompeteRequest } from '../types'
 import { createSSEStream, sseHeaders } from '../sse/stream'
 import { jobManager } from '../jobs/manager'
 import { generateSolution, type ModelId } from '../../lib/ai-generator'
 import { runTests, runBenchmarks, type TestRunOptions } from '../../lib/vitest-runner'
-import { loadChallengeConfig, isReactChallenge } from '../../lib/challenge-config'
+import { loadChallengeConfig, isReactChallenge, type ChallengeConfig } from '../../lib/challenge-config'
 import { runPerfTest } from '../../lib/playwright-runner'
 import { recordResult } from '../../lib/results'
 import { resolveChallengePath } from '../registry'
@@ -40,11 +41,44 @@ function json(data: unknown, status = 200): Response {
   })
 }
 
-export function handleCompete(body: unknown): Response {
+/**
+ * Validate external repo configuration before starting job
+ */
+function validateExternalRepoConfig(config: ChallengeConfig): string[] {
+  const errors: string[] = []
+  if (config.externalRepo) {
+    if (!config.externalRepo.path) errors.push('externalRepo.path is required')
+    if (!config.externalRepo.testPath) errors.push('externalRepo.testPath is required')
+    if (!config.externalRepo.solutionPath) errors.push('externalRepo.solutionPath is required')
+    if (config.externalRepo.path && !existsSync(config.externalRepo.path)) {
+      errors.push(`External repo path not found: ${config.externalRepo.path}`)
+    }
+  }
+  return errors
+}
+
+export async function handleCompete(body: unknown): Promise<Response> {
   const req = body as CompeteRequest
 
   if (!req.challenge) {
     return json({ error: 'challenge is required' }, 400)
+  }
+
+  // Validate challenge config before creating job
+  try {
+    const challengePath = await resolveChallengePath(req.challenge)
+    // Check challenge directory exists
+    if (!existsSync(challengePath)) {
+      return json({ error: `Challenge not found: ${req.challenge}` }, 404)
+    }
+    const challengeConfig = await loadChallengeConfig(challengePath)
+    const validationErrors = validateExternalRepoConfig(challengeConfig)
+    if (validationErrors.length > 0) {
+      return json({ error: 'Invalid challenge configuration', details: validationErrors }, 400)
+    }
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error'
+    return json({ error: `Failed to load challenge: ${message}` }, 400)
   }
 
   const models = req.models || DEFAULT_MODELS

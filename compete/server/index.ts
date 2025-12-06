@@ -118,7 +118,7 @@ async function handleRequest(req: Request): Promise<Response> {
     // Competition API
     if (pathname === '/api/compete' && method === 'POST') {
       const body = await parseBody(req)
-      return handleCompete(body)
+      return await handleCompete(body)
     }
 
     // Validation API
