@@ -1,0 +1,222 @@
+# Scenario Generation Eval Config - v6 Rubric Aligned (Full Scenarios)
+# Run: bun run eval:scenarios
+# View: bun run view
+
+description: "my-truth-app full scenario generation (v6 rubric)"
+
+prompts:
+  - file://prompts/scenario-generation.txt
+
+# Compare production model vs quality models
+providers:
+  - id: anthropic:claude-sonnet-4-20250514
+    label: Sonnet
+    config:
+      max_tokens: 500
+  - id: anthropic:claude-opus-4-5-20251101
+    label: Opus 4.5
+    config:
+      max_tokens: 500
+  - id: google:gemini-2.0-flash
+    label: Gemini 2.0 Flash
+    config:
+      maxOutputTokens: 500
+  - id: google:gemini-1.5-pro
+    label: Gemini 1.5 Pro
+    config:
+      maxOutputTokens: 500
+
+tests:
+  - file://evals/scenario-generation.yaml
+
+outputPath: outputs/scenario-results.json
+
+evaluateOptions:
+  maxConcurrency: 4
+  showProgressBar: true
+
+# =============================================================================
+# v6 RUBRIC ASSERTIONS (Full Scenario Format)
+# Aligned with my-truth-app/scripts/lib/rubrics/v6.ts
+# =============================================================================
+
+defaultTest:
+  assert:
+    # =========================================================================
+    # HARD CONSTRAINTS
+    # =========================================================================
+
+    # Word count: 100-150 words (tight range for quick grokking)
+    - type: javascript
+      value: |
+        const words = output.trim().split(/\s+/).length;
+        return words >= 100 && words <= 150;
+      metric: word_count
+
+    # Sentence count: 4-6 sentences (prevents cognitive overload)
+    - type: javascript
+      value: |
+        const sentences = output.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+        return sentences >= 4 && sentences <= 6;
+      metric: sentence_count
+
+    # Must have paragraph break (2 paragraphs for readability)
+    - type: javascript
+      value: |
+        const paragraphs = output.split(/\n\n+/).filter(p => p.trim().length > 0).length;
+        return paragraphs >= 2;
+      metric: has_paragraph_break
+
+    # Must use second person throughout
+    - type: javascript
+      value: |
+        const lower = output.toLowerCase();
+        return lower.includes('you') || lower.includes('your');
+      metric: second_person
+
+    # Must include specific numbers (financial, temporal, or quantitative)
+    - type: javascript
+      value: |
+        const hasNumbers = /\$[\d,]+|\d+%|\d+ (years?|months?|weeks?|days?|hours?)|\d{2,}/.test(output);
+        return hasNumbers;
+      metric: has_specific_numbers
+
+    # =========================================================================
+    # BANNED PATTERNS (v6 Writing Quality hard rules)
+    # Source: v6.ts BANNED_PATTERNS
+    # =========================================================================
+
+    # Em-dashes (auto-fail for Writing Quality)
+    # Note: The example uses em-dash, so we check for double-dash only
+    - type: not-contains
+      value: "--"
+
+    # Semicolons (auto-fail for Writing Quality)
+    - type: not-contains
+      value: ";"
+
+    # Hedging words (auto-fail for Writing Quality)
+    - type: not-icontains
+      value: " might "
+    - type: not-icontains
+      value: " perhaps "
+    - type: not-icontains
+      value: " typically "
+    - type: not-icontains
+      value: " probably "
+    - type: not-icontains
+      value: " possibly "
+    - type: not-icontains
+      value: " generally "
+
+    # AI clichés (auto-fail for Writing Quality)
+    # Source: v6.ts BANNED_PATTERNS.aiCliches
+    - type: not-icontains
+      value: "delve"
+    - type: not-icontains
+      value: "navigate"
+    - type: not-icontains
+      value: "dive into"
+    - type: not-icontains
+      value: "embark on"
+    - type: not-icontains
+      value: "it goes without saying"
+    - type: not-icontains
+      value: "at the end of the day"
+    - type: not-icontains
+      value: "lightning in a bottle"
+    - type: not-icontains
+      value: "dream come true"
+
+    # Bad opening patterns (auto-fail for Writing Quality)
+    - type: javascript
+      value: |
+        const lower = output.toLowerCase().trim();
+        return !lower.startsWith("you've always") && !lower.startsWith("you have always");
+      metric: no_bad_openings
+
+    # Filler phrases (auto-fail for Writing Quality)
+    # Source: v6.ts BANNED_PATTERNS.fillerPhrases
+    - type: not-icontains
+      value: "in order to"
+    - type: not-icontains
+      value: "due to the fact that"
+    - type: not-icontains
+      value: "it is important to note"
+    - type: not-icontains
+      value: "it should be noted"
+
+    # =========================================================================
+    # META-LANGUAGE (no dilemma leakage)
+    # =========================================================================
+    - type: not-icontains
+      value: "deciding"
+    - type: not-icontains
+      value: "weighing"
+    - type: not-icontains
+      value: " choice"
+    - type: not-icontains
+      value: "dilemma"
+    - type: not-icontains
+      value: "trade-off"
+
+    # =========================================================================
+    # v6 FULL RUBRIC (LLM-graded - all 7 dimensions)
+    # Source: v6.ts dimensions
+    # =========================================================================
+    - type: llm-rubric
+      value: |
+        Evaluate this scenario for a values-discovery game using the v6 Gold-Tier rubric.
+        The scenario should place the reader in a rich, specific situation where two genuinely desirable paths diverge.
+
+        NARRATIVE CONGRUENCE (weight 25%):
+        - Score 5: Fully justified, mutually exclusive, emotionally and logically coherent. The constraints are structural (contracts, timelines, geography).
+        - Score 3: Plausible but missing constraints. Reader might think "Why not both?"
+        - Score 1: Choices feel arbitrary, combinable, or bolted on.
+
+        IDENTITY ACTIVATION (weight 20%):
+        - Score 5: Deep identity stakes. Touches worldview, values, or life philosophy.
+        - Score 3: Some identity relevance.
+        - Score 1: Purely logistical or trivial.
+
+        TRADE-OFF CLARITY (weight 10%):
+        - Score 5: Both options feel like genuine wins (Ferrari vs Lamborghini). Reader thinks "damn, I want BOTH."
+        - Score 3: Mild tension. One option feels like settling or sacrifice.
+        - Score 1: One choice is obviously better, or one feels "right" while the other feels cowardly/wrong.
+
+        VALUE ACCURACY (weight 15%):
+        - Score 5: Clean mapping to the stated axis.
+        - Score 3: Mild axis blending.
+        - Score 1: Not measuring the intended axis or measuring multiple axes.
+
+        SOCIAL DESIRABILITY PARITY (weight 10%):
+        - Score 5: Both options equally defensible to a friend. No "jerk option."
+        - Score 3: Slight social desirability tilt.
+        - Score 1: One option is clearly "the right thing to do" while the other sounds cowardly or selfish.
+
+        PROMPT QUALITY (weight 10%):
+        - Score 5: Concrete, grounded, emotionally resonant. Uses specific names, places, dollar amounts, and sensory details.
+        - Score 3: Generic but understandable. Lacks specific details or feels like a template.
+        - Score 1: Vague, abstract, confusing. No grounding details.
+
+        WRITING QUALITY (weight 10%):
+        - Score 5: Reads naturally aloud like a story told at a bar. Short sentences with natural rhythm.
+        - Score 3: Mostly readable but contains some awkward phrasing or overly long sentences.
+        - Score 1: Contains banned patterns (em-dashes, semicolons, hedging, AI clichés) or opens with "You've always..."
+
+        COGNITIVE ACCESSIBILITY (weight 10%):
+        - Score 5: Grasps in one read. No re-reading needed. Clean mental model forms instantly. Every sentence earns its place.
+        - Score 3: Mostly clear but one detail requires backtracking or feels extraneous.
+        - Score 1: Dense, confusing, or requires multiple reads. Too many proper nouns, numbers, or nested details.
+
+        GOLD-TIER requires:
+        - Weighted average >= 4.3
+        - Narrative Congruence >= 4
+        - Identity Activation >= 4
+        - Writing Quality >= 4
+
+        PASS if weighted average >= 3.5 AND no dimension scores 1.
+        FAIL if any dimension scores 1 OR weighted average < 3.0.
+
+        Provide a brief reason for your verdict.
+      metric: v6_full_rubric

@@ -1,0 +1,18 @@
+{
+  "type": "react-component",
+  "name": "Virtualized List",
+  "performanceThresholds": {
+    "minFps": 55,
+    "maxAvgRenderTime": 1,
+    "maxBundleSize": 1024,
+    "maxMemoryGrowth": 1048576
+  },
+  "weights": {
+    "fps": 35,
+    "bundle": 30,
+    "renderEfficiency": 25,
+    "memory": 10
+  },
+  "generationTimeout": 90000,
+  "maxRetries": 3
+}

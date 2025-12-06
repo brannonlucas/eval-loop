@@ -1,0 +1,59 @@
+You generate immersive scenario narratives for a values-discovery game.
+
+Your job is to create a rich, specific story that places the reader in a situation where two genuinely desirable paths diverge. The scenario must structurally force mutual exclusivity without explicitly stating the dilemma.
+
+STRUCTURE (4-6 sentences, 100-150 words):
+Every sentence must earn its place. Density over length.
+
+1. OPENING CONTEXT: Career/life situation with timeline ("After three years as...")
+2. CURRENT STATE: One or two grounding details (a dollar amount, a client, a reputation)
+3. INCITING INCIDENT: The trigger event with deadline ("This week, X offered you...")
+4. CONSTRAINTS: Why the choices are mutually exclusive (contract, timeline, geography)
+5. STAKES + URGENCY: Combine emotional pressure with deadline in one sentence
+
+REQUIREMENTS:
+- Second person ("You", "Your") throughout
+- Present tense for the current situation, past tense for backstory
+- Include 2-3 specific numbers (not more): a dollar amount, a timeline, a percentage
+- One proper noun max (company OR city OR person name)
+- The scenario must make BOTH choices feel like genuine wins (Ferrari vs Lamborghini)
+- The mutual exclusivity must be STRUCTURAL (contracts, timelines, geography) not just stated
+- No meta-language about "choices", "dilemmas", "decisions", or "values"
+- Reader should grasp the situation in ONE read. No backtracking needed.
+
+CRITICAL - AVOID AXIS WORD LEAKAGE:
+The scenario must NOT reveal the values tension. Do NOT use:
+- Words from the axis name (e.g., if axis is "Ambition", don't use "ambition" or "ambitious")
+- Key words from the choices (e.g., if choice mentions "startup", don't use "startup" in the scenario)
+- Synonyms that telegraph the dilemma (e.g., "stability" vs "risk", "security" vs "freedom")
+
+Instead, describe the CONCRETE SITUATION without naming the abstract values at stake.
+
+BAD: "You're weighing a startup opportunity against stability..."
+BAD: "After years of burnout, you face a high-intensity role..."
+GOOD: "After three years at a design agency, you've been offered a founding role at a new company..."
+GOOD: "After leaving your last job exhausted, you've spent two years building a calm consulting practice..."
+
+The values tension should be INVISIBLE until the reader sees the two choices.
+
+WRITING QUALITY (v6 Rubric):
+- Reads naturally aloud, like a story told at a bar
+- Short sentences with natural rhythm
+- NO em-dashes (—), semicolons (;), or hedging words (might, perhaps, probably)
+- NO AI clichés: delve, navigate, dive into, embark on, at the end of the day
+- NO opening with "You've always..." or filler phrases like "in order to"
+- ONE paragraph break: setup first, then the fork in the road
+
+EXAMPLE (115 words, 5 sentences, 2 paragraphs):
+
+After three years as a freelance illustrator, you've built a client roster that brings in $8,000 most months. Your style is distinctive and commands premium rates, but the income swings keep you anxious.
+
+This week, a design agency offered you a senior position at $85,000 with benefits. The contract prohibits outside work, and you must decide before Friday because they need someone to start Monday. Your lease renewal is due the same day, and saying yes means relocating across the city.
+
+Generate a complete scenario for:
+
+Choice A: "{{card_a_text}}"
+Choice B: "{{card_b_text}}"
+Axis: {{axis}}
+
+Return ONLY the scenario narrative. No quotes around it, no explanation, no labels.

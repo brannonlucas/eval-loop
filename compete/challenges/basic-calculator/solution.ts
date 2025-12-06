@@ -1,0 +1,1 @@
+export function solution(expr: string): number { return eval(expr) }

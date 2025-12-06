@@ -1,0 +1,40 @@
+[
+  {
+    "challenge": "lru-cache",
+    "timestamp": "2025-12-06T17:38:13.177Z",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet",
+        "gpt4",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 1863,
+        "duration": 767
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 2176,
+        "duration": 761
+      },
+      {
+        "model": "opus",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 2161,
+        "duration": 832
+      }
+    ]
+  }
+]

@@ -1,0 +1,51 @@
+# Starter Eval Suite
+# Demonstrates different assertion types
+
+# Test 1: Factual accuracy with contains assertion
+- vars:
+    question: "What is the capital of France?"
+  assert:
+    - type: contains
+      value: "Paris"
+    - type: not-contains
+      value: "London"
+
+# Test 2: Math reasoning with icontains (case-insensitive)
+- vars:
+    question: "What is 15 + 27?"
+  assert:
+    - type: contains
+      value: "42"
+
+# Test 3: Explanation quality with LLM-graded rubric
+- vars:
+    question: "Explain what an API is in one sentence."
+  assert:
+    - type: llm-rubric
+      value: |
+        The response should:
+        - Be a single sentence
+        - Mention that APIs allow software to communicate
+        - Be understandable to a non-technical person
+
+# Test 4: Code generation with javascript assertion
+- vars:
+    question: "Write a JavaScript function that adds two numbers."
+  assert:
+    - type: contains
+      value: "function"
+    - type: javascript
+      value: |
+        // Check that it looks like valid JS
+        output.includes('return') && output.includes('+')
+
+# Test 5: Conciseness check with cost/latency awareness
+- vars:
+    question: "What color is the sky on a clear day?"
+  assert:
+    - type: contains
+      value: "blue"
+    - type: javascript
+      value: |
+        // Response should be concise (under 100 words)
+        output.split(' ').length < 100

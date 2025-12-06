@@ -1,0 +1,100 @@
+# Scenario Generation Test Cases
+# Tests prompt quality for my-truth-app values-discovery game
+
+# 1. Money/Time Trade-off (Time axis)
+- vars:
+    card_a_text: "Use an unexpected bonus to pay down debt and invest for the long term."
+    card_b_text: "Use an unexpected bonus to take an amazing, once-in-a-lifetime trip."
+    axis: "Time"
+  assert:
+    - type: not-icontains
+      value: "future"
+    - type: not-icontains
+      value: "present"
+    - type: not-icontains
+      value: "long-term"
+
+# 2. Leadership Decision (Decisions axis)
+- vars:
+    card_a_text: "Make a tough, data-driven decision to lay off 10% of your team to save the company."
+    card_b_text: "Avoid layoffs by asking the entire team to take a 10% pay cut, preserving the family culture."
+    axis: "Decisions"
+  assert:
+    - type: not-icontains
+      value: "logic"
+    - type: not-icontains
+      value: "community"
+
+# 3. Family/Career Balance (Social axis)
+- vars:
+    card_a_text: "Move your family to a new city for your partners dream job, even if it sets your own career back."
+    card_b_text: "Ask your partner to pass on the job so you can both stay near your established network and careers."
+    axis: "Social"
+  assert:
+    - type: not-icontains
+      value: "community"
+    - type: not-icontains
+      value: "self-reliance"
+
+# 4. Career Freedom vs Security (Agency axis)
+- vars:
+    card_a_text: "Take a job with lower pay but complete control over your schedule and projects."
+    card_b_text: "Take a job with higher pay but a strict schedule and close supervision."
+    axis: "Agency"
+  assert:
+    - type: not-icontains
+      value: "autonomy"
+    - type: not-icontains
+      value: "freedom"
+
+# 5. Specialist vs Generalist (Focus axis)
+- vars:
+    card_a_text: "Become a deep specialist in one narrow field."
+    card_b_text: "Develop broad skills across many different areas."
+    axis: "Focus"
+  assert:
+    - type: not-icontains
+      value: "mastery"
+    - type: not-icontains
+      value: "variety"
+    - type: not-icontains
+      value: "specialist"
+    - type: not-icontains
+      value: "generalist"
+
+# 6. Burnout Recovery (Drive axis)
+- vars:
+    card_a_text: "Take the role and trust that you can handle intensity differently now"
+    card_b_text: "Honor what you have built and trust that peace is its own form of success"
+    axis: "Drive"
+  assert:
+    - type: not-icontains
+      value: "drive"
+    - type: not-icontains
+      value: "acceptance"
+    - type: not-icontains
+      value: "burnout"
+
+# 7. Startup vs Stability (Ambition axis)
+- vars:
+    card_a_text: "Leave for the startup and chase the vision that kept you up at night in your twenties"
+    card_b_text: "Accept the director role and build from a foundation that can hold what is coming"
+    axis: "Ambition"
+  assert:
+    - type: not-icontains
+      value: "ambition"
+    - type: not-icontains
+      value: "stability"
+    - type: not-icontains
+      value: "startup"
+
+# 8. Autonomy vs Partnership (Autonomy axis)
+- vars:
+    card_a_text: "Stay and protect the career you have built on your own terms"
+    card_b_text: "Follow them into the security of a shared life, even if it means losing what you have made"
+    axis: "Autonomy"
+  assert:
+    - type: not-icontains
+      value: "autonomy"
+    - type: not-icontains
+      value: "independence"

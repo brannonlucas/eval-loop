@@ -1,0 +1,5 @@
+You are a helpful assistant. Answer the following question concisely and accurately.
+
+Question: {{question}}
+
+Provide a clear, direct answer.

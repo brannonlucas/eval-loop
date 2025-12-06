@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eval-loop Dashboard</title>
+  <link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+  <header>
+    <div class="header-left">
+      <h1>eval-loop</h1>
+      <span class="version">v1.0</span>
+    </div>
+    <nav>
+      <button class="nav-btn active" data-view="live">Live</button>
+      <button class="nav-btn" data-view="challenges">Challenges</button>
+      <button class="nav-btn" data-view="results">Results</button>
+    </nav>
+    <div class="header-right">
+      <div id="server-status" class="status-indicator" title="Server status">
+        <span class="status-dot"></span>
+        <span class="status-text">Connecting...</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Live View -->
+    <section id="live-view" class="view">
+      <div class="view-header">
+        <h2>Live Competitions</h2>
+        <button id="start-competition-btn" class="btn btn-primary">+ New Competition</button>
+      </div>
+
+      <div id="active-jobs" class="jobs-container">
+        <div class="empty-state">
+          <div class="empty-icon">&#9654;</div>
+          <p>No active competitions</p>
+          <p class="text-muted">Start a new competition or wait for one to begin</p>
+        </div>
+      </div>
+
+      <div id="job-queue" class="queue-container" hidden>
+        <h3>Queued</h3>
+        <div id="queue-list"></div>
+      </div>
+    </section>
+
+    <!-- Challenges View -->
+    <section id="challenges-view" class="view" hidden>
+      <div class="view-header">
+        <h2>Challenges</h2>
+      </div>
+
+      <div class="challenges-layout">
+        <div id="challenge-list" class="challenge-list"></div>
+        <div id="challenge-detail" class="challenge-detail">
+          <div class="empty-state">
+            <p>Select a challenge to view details</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results View -->
+    <section id="results-view" class="view" hidden>
+      <div class="view-header">
+        <h2>Historical Results</h2>
+        <div class="results-filters">
+          <select id="filter-challenge">
+            <option value="">All Challenges</option>
+          </select>
+          <select id="filter-model">
+            <option value="">All Models</option>
+            <option value="sonnet">Sonnet</option>
+            <option value="gpt4">GPT-4</option>
+            <option value="opus">Opus</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="results-table">
+          <thead>
+            <tr>
+              <th>Challenge</th>
+              <th>Model</th>
+              <th>Result</th>
+              <th>Attempts</th>
+              <th>Metrics</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="results-body">
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- New Competition Modal -->
+  <div id="competition-modal" class="modal" hidden>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Start New Competition</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <form id="competition-form">
+        <div class="form-group">
+          <label for="modal-challenge">Challenge</label>
+          <select id="modal-challenge" required>
+            <option value="">Select a challenge...</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Models</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" name="models" value="sonnet" checked> Sonnet</label>
+            <label><input type="checkbox" name="models" value="gpt4" checked> GPT-4</label>
+            <label><input type="checkbox" name="models" value="opus"> Opus</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="modal-attempts">Max Attempts</label>
+          <input type="number" id="modal-attempts" value="5" min="1" max="10">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+          <button type="submit" class="btn btn-primary">Start Competition</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/dashboard.js"></script>
+</body>
+</html>

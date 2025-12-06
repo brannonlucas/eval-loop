@@ -1,0 +1,40 @@
+{
+  "name": "eval-loop",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "eval": "promptfoo eval",
+    "eval:watch": "promptfoo eval --watch",
+    "eval:scenarios": "promptfoo eval -c promptfoo.scenario.yaml",
+    "eval:scenarios:watch": "promptfoo eval -c promptfoo.scenario.yaml --watch",
+    "view": "promptfoo view",
+    "cache:clear": "promptfoo cache clear",
+    "compete": "bun run compete/runner.ts",
+    "server": "bun run compete/server/index.ts",
+    "test": "vitest run",
+    "bench": "vitest bench"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/bun": "latest",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "happy-dom": "^20.0.11",
+    "vitest": "^4.0.15"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.2",
+    "@google/generative-ai": "^0.24.1",
+    "@vitejs/plugin-react": "^5.1.1",
+    "openai": "^6.10.0",
+    "promptfoo": "^0.119.14",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
+    "vite": "^7.2.6"
+  }
+}

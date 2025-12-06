@@ -1,0 +1,35 @@
+# Promptfoo Configuration
+# Docs: https://www.promptfoo.dev/docs/configuration/guide
+
+description: "Multi-provider LLM evaluation suite"
+
+# Prompt templates to test
+prompts:
+  - file://prompts/example.txt
+
+# LLM providers to compare
+providers:
+  - id: anthropic:claude-sonnet-4-20250514
+    label: Claude Sonnet
+  - id: openai:gpt-4o
+    label: GPT-4o
+  # Uncomment when Ollama is running locally:
+  # - id: ollama:llama3.2
+  #   label: Llama 3.2 (Local)
+
+# Default test cases (can also load from external files)
+tests:
+  - file://evals/starter.yaml
+
+# Output configuration
+outputPath: outputs/results.json
+
+# Evaluation settings
+evaluateOptions:
+  maxConcurrency: 4
+  showProgressBar: true
+
+# Default assertions applied to all tests (optional)
+defaultTest:
+  options:
+    transformVars: "{ ...vars, timestamp: new Date().toISOString() }"
