@@ -10,11 +10,16 @@ import type { CompeteRequest } from '../types'
 import { createSSEStream, sseHeaders } from '../sse/stream'
 import { jobManager } from '../jobs/manager'
 import { generateSolution, type ModelId } from '../../lib/ai-generator'
-import { runTests, runBenchmarks } from '../../lib/vitest-runner'
+import { runTests, runBenchmarks, type TestRunOptions } from '../../lib/vitest-runner'
 import { loadChallengeConfig, isReactChallenge } from '../../lib/challenge-config'
 import { runPerfTest } from '../../lib/playwright-runner'
 import { recordResult } from '../../lib/results'
 import { resolveChallengePath } from '../registry'
+import {
+  setupExternalWorkspace,
+  isExternalRepoChallenge,
+  type WorkspaceContext,
+} from '../../lib/workspace'
 
 const DEFAULT_MODELS: ModelId[] = ['sonnet', 'gpt4']
 const DEFAULT_MAX_ATTEMPTS = 5
@@ -101,11 +106,32 @@ async function runCompetitionJob(jobId: string): Promise<void> {
   }
 
   const { challenge, models, maxAttempts } = job.config
+  let workspace: WorkspaceContext | null = null
 
   try {
     const challengePath = await resolveChallengePath(challenge)
     const challengeConfig = await loadChallengeConfig(challengePath)
     const isReact = isReactChallenge(challengeConfig)
+    const isExternal = isExternalRepoChallenge(challengeConfig)
+    const fileExt = isReact ? 'tsx' : 'ts'
+
+    // Set up workspace for external repo challenges
+    if (isExternal && challengeConfig.externalRepo) {
+      jobManager.updateProgress(jobId, {
+        currentModel: '',
+        currentAttempt: 0,
+        phase: 'setup',
+        message: 'Setting up isolated workspace...',
+      })
+
+      workspace = await setupExternalWorkspace({
+        challengeName: challenge,
+        challengePath,
+        externalRepo: challengeConfig.externalRepo,
+        fileExt,
+        keepWorkspace: false,
+      })
+    }
 
     for (const model of models) {
       if (job.abortController.signal.aborted) {
@@ -147,13 +173,26 @@ async function runCompetitionJob(jobId: string): Promise<void> {
             message: 'Writing solution file',
           })
 
-          const fileExt = isReact ? 'tsx' : 'ts'
-          const solutionPath = join(challengePath, 'solutions', `${model}.${fileExt}`)
-          await mkdir(join(challengePath, 'solutions'), { recursive: true })
-          await writeFile(solutionPath, code)
+          let activeSolutionPath: string
 
-          const activeSolutionPath = join(challengePath, `solution.${fileExt}`)
-          await writeFile(activeSolutionPath, code)
+          if (workspace) {
+            // External repo: write to isolated workspace
+            await mkdir(join(workspace.workspacePath, 'solutions'), { recursive: true })
+            const modelSolutionPath = join(workspace.workspacePath, 'solutions', `${model}.${fileExt}`)
+            await writeFile(modelSolutionPath, code)
+
+            // Write as the active solution for test import
+            await writeFile(workspace.solutionPath, code)
+            activeSolutionPath = workspace.solutionPath
+          } else {
+            // Standard challenge: write to challenge directory
+            const solutionPath = join(challengePath, 'solutions', `${model}.${fileExt}`)
+            await mkdir(join(challengePath, 'solutions'), { recursive: true })
+            await writeFile(solutionPath, code)
+
+            activeSolutionPath = join(challengePath, `solution.${fileExt}`)
+            await writeFile(activeSolutionPath, code)
+          }
 
           // Run tests
           jobManager.updateProgress(jobId, {
@@ -161,7 +200,10 @@ async function runCompetitionJob(jobId: string): Promise<void> {
             message: 'Running tests',
           })
 
-          const testResult = await runTests(challenge)
+          const testRunOptions: TestRunOptions = workspace
+            ? { workspacePath: workspace.workspacePath, testFilePath: workspace.testPath }
+            : {}
+          const testResult = await runTests(challenge, testRunOptions)
 
           if (testResult.passed) {
             if (isReact) {
@@ -228,5 +270,10 @@ async function runCompetitionJob(jobId: string): Promise<void> {
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     jobManager.failJob(jobId, message)
+  } finally {
+    // Clean up workspace
+    if (workspace) {
+      await workspace.cleanup()
+    }
   }
 }
