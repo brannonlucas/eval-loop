@@ -4,7 +4,7 @@
  * Manages competition jobs with queuing, state tracking, and cancellation.
  */
 
-import type { Job, JobCreateOptions, JobStatus, JobProgress, JobResult } from './types'
+import type { Job, JobCreateOptions, JobStatus, JobProgress, JobResult, AttemptRecord } from './types'
 import type { SSEStream } from '../sse/stream'
 
 const MAX_CONCURRENT_JOBS = 2
@@ -119,6 +119,34 @@ class JobManager {
     if (job.sseStream && !job.sseStream.isClosed()) {
       job.sseStream.send('result', result)
     }
+  }
+
+  /**
+   * Set debug path for a job
+   */
+  setDebugPath(jobId: string, debugPath: string) {
+    const job = this.jobs.get(jobId)
+    if (!job) return
+
+    job.debugPath = debugPath
+    job.attemptHistory = {}
+  }
+
+  /**
+   * Add an attempt record for debugging
+   */
+  addAttemptRecord(jobId: string, model: string, record: AttemptRecord) {
+    const job = this.jobs.get(jobId)
+    if (!job) return
+
+    if (!job.attemptHistory) {
+      job.attemptHistory = {}
+    }
+    if (!job.attemptHistory[model]) {
+      job.attemptHistory[model] = []
+    }
+
+    job.attemptHistory[model].push(record)
   }
 
   /**

@@ -322,6 +322,63 @@ export const openApiSchema = {
         },
       },
     },
+    '/api/jobs/{id}/debug': {
+      get: {
+        operationId: 'getJobDebug',
+        summary: 'Get detailed debug info for a job',
+        description:
+          'Returns full solutions, test outputs, prompts, and timing for each attempt. Useful for debugging why tests failed and prompt engineering. Only available for completed or failed jobs.',
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string' },
+            description: 'Job ID',
+          },
+          {
+            name: 'model',
+            in: 'query',
+            required: false,
+            schema: { type: 'string' },
+            description: 'Filter results to a specific model (e.g., sonnet, opus)',
+          },
+        ],
+        responses: {
+          '200': {
+            description: 'Detailed debug information',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/JobDebugResponse' },
+              },
+            },
+          },
+          '400': {
+            description: 'Job is still running',
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    error: { type: 'string' },
+                    status: { $ref: '#/components/schemas/JobStatus' },
+                    progress: { type: 'object' },
+                  },
+                },
+              },
+            },
+          },
+          '404': {
+            description: 'Job not found or no debug info available',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ErrorResponse' },
+              },
+            },
+          },
+        },
+      },
+    },
   },
   components: {
     schemas: {
@@ -530,6 +587,16 @@ export const openApiSchema = {
             default: true,
             description: 'Use SSE streaming',
           },
+          debug: {
+            type: 'boolean',
+            default: false,
+            description: 'Save debug artifacts (solutions, vitest output)',
+          },
+          refinementRound: {
+            type: 'boolean',
+            default: false,
+            description: 'Enable refinement round where models improve winning solution',
+          },
         },
         required: ['challenge'],
       },
@@ -565,6 +632,85 @@ export const openApiSchema = {
           startedAt: { type: 'string', format: 'date-time', nullable: true },
           completedAt: { type: 'string', format: 'date-time', nullable: true },
         },
+      },
+      TestFailure: {
+        type: 'object',
+        description: 'Details about a single test failure',
+        properties: {
+          testName: { type: 'string', description: 'Name of the failing test' },
+          error: { type: 'string', description: 'Error message' },
+          expected: { type: 'string', nullable: true, description: 'Expected value (if assertion)' },
+          received: { type: 'string', nullable: true, description: 'Received value (if assertion)' },
+        },
+        required: ['testName', 'error'],
+      },
+      ParsedTestOutput: {
+        type: 'object',
+        description: 'Structured test output from vitest',
+        properties: {
+          passed: { type: 'boolean', description: 'Whether all tests passed' },
+          numTests: { type: 'number', description: 'Total number of tests' },
+          numPassed: { type: 'number', description: 'Number of passing tests' },
+          numFailed: { type: 'number', description: 'Number of failing tests' },
+          failures: {
+            type: 'array',
+            items: { $ref: '#/components/schemas/TestFailure' },
+            description: 'Details of each test failure',
+          },
+          stdout: { type: 'string', nullable: true, description: 'Full vitest stdout output' },
+        },
+        required: ['passed', 'numTests', 'numPassed', 'numFailed', 'failures'],
+      },
+      AttemptRecord: {
+        type: 'object',
+        description: 'Record of a single generation attempt',
+        properties: {
+          attemptNumber: { type: 'number', description: 'Attempt number (1-indexed)' },
+          solution: { type: 'string', description: 'Generated code for this attempt' },
+          testOutput: { $ref: '#/components/schemas/ParsedTestOutput' },
+          prompt: { type: 'string', description: 'The prompt sent to the model' },
+          feedback: {
+            type: 'string',
+            nullable: true,
+            description: 'Error feedback from previous attempt used for retry',
+          },
+          duration: { type: 'number', description: 'Generation time in milliseconds' },
+        },
+        required: ['attemptNumber', 'solution', 'testOutput', 'prompt', 'duration'],
+      },
+      ModelDebugInfo: {
+        type: 'object',
+        description: 'Debug information for a single model',
+        properties: {
+          attempts: {
+            type: 'array',
+            items: { $ref: '#/components/schemas/AttemptRecord' },
+            description: 'All attempts made by this model',
+          },
+          finalStatus: {
+            type: 'string',
+            enum: ['passed', 'failed'],
+            description: 'Final outcome for this model',
+          },
+        },
+        required: ['attempts', 'finalStatus'],
+      },
+      JobDebugResponse: {
+        type: 'object',
+        description: 'Detailed debug information for a completed job',
+        properties: {
+          jobId: { type: 'string', description: 'Job ID' },
+          challenge: { type: 'string', description: 'Challenge name' },
+          timestamp: { type: 'string', format: 'date-time', description: 'When the job was created' },
+          models: {
+            type: 'object',
+            additionalProperties: { $ref: '#/components/schemas/ModelDebugInfo' },
+            description: 'Debug info keyed by model ID',
+          },
+          promptMd: { type: 'string', description: 'Challenge prompt.md content' },
+          config: { type: 'object', description: 'Challenge configuration' },
+        },
+        required: ['jobId', 'challenge', 'timestamp', 'models', 'promptMd', 'config'],
       },
     },
   },

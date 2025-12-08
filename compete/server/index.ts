@@ -13,7 +13,8 @@ import { handleCompete } from './routes/compete'
 import { handleValidate } from './routes/validate'
 import { handleGenerate } from './routes/generate'
 import { handleChallenges, handleChallengeDetail, handleCreateChallenge } from './routes/challenges'
-import { handleJobStatus, handleCancelJob, handleListJobs } from './routes/jobs'
+import { handleResults } from './routes/results'
+import { handleJobStatus, handleCancelJob, handleListJobs, handleJobDebug } from './routes/jobs'
 import { handleDocs } from './routes/docs'
 import { handleStatic, isStaticPath } from './routes/static'
 import { jobManager } from './jobs/manager'
@@ -150,9 +151,21 @@ async function handleRequest(req: Request): Promise<Response> {
       return handleChallengeDetail(challengeMatch[1])
     }
 
+    // Historical results
+    if (pathname === '/api/results' && method === 'GET') {
+      return handleResults(url)
+    }
+
     // List all jobs
     if (pathname === '/api/jobs' && method === 'GET') {
       return handleListJobs()
+    }
+
+    // Job debug (must match before simpler job status route)
+    const jobDebugMatch = pathname.match(/^\/api\/jobs\/([^/]+)\/debug$/)
+    if (jobDebugMatch && method === 'GET') {
+      const modelFilter = url.searchParams.get('model') || undefined
+      return await handleJobDebug(jobDebugMatch[1], modelFilter)
     }
 
     // Job status

@@ -4,7 +4,7 @@
  * POST /api/compete - Run a competition with SSE progress streaming
  */
 
-import { writeFile, mkdir } from 'fs/promises'
+import { writeFile, mkdir, readFile } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import type { CompeteRequest } from '../types'
@@ -14,13 +14,20 @@ import { generateSolution, type ModelId } from '../../lib/ai-generator'
 import { runTests, runBenchmarks, type TestRunOptions } from '../../lib/vitest-runner'
 import { loadChallengeConfig, isReactChallenge, type ChallengeConfig } from '../../lib/challenge-config'
 import { runPerfTest } from '../../lib/playwright-runner'
-import { recordResult } from '../../lib/results'
+import { recordResult, type ModelResult } from '../../lib/results'
+import { calculatePerfScore } from '../../lib/react-metrics'
 import { resolveChallengePath } from '../registry'
 import {
   setupExternalWorkspace,
   isExternalRepoChallenge,
   type WorkspaceContext,
 } from '../../lib/workspace'
+import {
+  buildRefinementPrompt,
+  calculateImprovement,
+  type WinnerMetrics,
+} from '../../lib/refinement-prompt'
+import { parseVitestJsonString, type ParsedTestOutput } from '../../lib/vitest-parser'
 
 const DEFAULT_MODELS: ModelId[] = ['sonnet', 'gpt4']
 const DEFAULT_MAX_ATTEMPTS = 5
@@ -108,13 +115,14 @@ export async function handleCompete(body: unknown): Promise<Response> {
   const maxAttempts = req.maxAttempts || DEFAULT_MAX_ATTEMPTS
   const useSSE = req.stream !== false
   const debug = req.debug ?? false
+  const refinementRound = req.refinementRound ?? false
 
   if (useSSE) {
     // SSE streaming response
     const sse = createSSEStream()
 
     const job = jobManager.createJob({
-      config: { challenge: req.challenge, models, maxAttempts, debug },
+      config: { challenge: req.challenge, models, maxAttempts, debug, refinementRound },
       sseStream: sse,
     })
 
@@ -132,7 +140,7 @@ export async function handleCompete(body: unknown): Promise<Response> {
   } else {
     // Non-streaming: return job ID for polling
     const job = jobManager.createJob({
-      config: { challenge: req.challenge, models, maxAttempts, debug },
+      config: { challenge: req.challenge, models, maxAttempts, debug, refinementRound },
     })
 
     // Start job execution async
@@ -163,9 +171,11 @@ async function runCompetitionJob(jobId: string): Promise<void> {
     if (job.abortController.signal.aborted) return
   }
 
-  const { challenge, models, maxAttempts, debug } = job.config
+  const { challenge, models, maxAttempts, debug, refinementRound } = job.config
   let workspace: WorkspaceContext | null = null
   let debugPath: string | null = null
+  const refinementResults: ModelResult[] = []
+  let refinementWinner: string | undefined
 
   try {
     const challengePath = await resolveChallengePath(challenge)
@@ -178,6 +188,7 @@ async function runCompetitionJob(jobId: string): Promise<void> {
     if (debug) {
       debugPath = createDebugPath(challenge)
       await mkdir(debugPath, { recursive: true })
+      jobManager.setDebugPath(jobId, debugPath)
     }
 
     // Set up workspace for external repo challenges
@@ -232,9 +243,16 @@ async function runCompetitionJob(jobId: string): Promise<void> {
           message: generatingMsg,
         })
 
+        // Track timing for attempt
+        const attemptStartTime = Date.now()
+        const attemptFeedback = feedback // Capture feedback used for this attempt
+        let attemptDuration = 0
+        let attemptTestOutput: ParsedTestOutput | null = null
+
         try {
           // Generate solution
           const code = await generateSolution({ model, challenge, feedback })
+          attemptDuration = Date.now() - attemptStartTime
           lastCode = code
 
           // Write solution file
@@ -286,6 +304,34 @@ async function runCompetitionJob(jobId: string): Promise<void> {
               }
             : { captureFullOutput: debug }
           const testResult = await runTests(challenge, testRunOptions)
+
+          // Parse test output for debug tracking
+          if (testResult.rawOutput) {
+            // Try to parse as JSON first (vitest --reporter json)
+            attemptTestOutput = parseVitestJsonString(testResult.rawOutput)
+          } else {
+            // Fallback: construct from errors array
+            attemptTestOutput = {
+              passed: testResult.passed,
+              numTests: testResult.passed ? 1 : 0,
+              numPassed: testResult.passed ? 1 : 0,
+              numFailed: testResult.passed ? 0 : testResult.errors.length,
+              failures: testResult.errors.map((err) => ({
+                testName: 'unknown',
+                error: err,
+              })),
+            }
+          }
+
+          // Record attempt for debug endpoint
+          jobManager.addAttemptRecord(jobId, model, {
+            attemptNumber: attempts,
+            solution: code,
+            prompt: `Challenge: ${challenge}${attemptFeedback ? `\nFeedback from previous attempt:\n${attemptFeedback}` : ''}`,
+            feedback: attemptFeedback || undefined,
+            duration: attemptDuration,
+            testOutput: attemptTestOutput,
+          })
 
           // Save test output to debug directory
           if (modelDebugPath && testResult.rawOutput) {
@@ -348,6 +394,23 @@ async function runCompetitionJob(jobId: string): Promise<void> {
         } catch (err) {
           const message = err instanceof Error ? err.message : String(err)
           feedback = `Error: ${message}`
+
+          // Record failed attempt for debug endpoint (if we have any code)
+          const errorDuration = Date.now() - attemptStartTime
+          jobManager.addAttemptRecord(jobId, model, {
+            attemptNumber: attempts,
+            solution: lastCode || '// Generation failed before producing code',
+            prompt: `Challenge: ${challenge}${attemptFeedback ? `\nFeedback from previous attempt:\n${attemptFeedback}` : ''}`,
+            feedback: attemptFeedback || undefined,
+            duration: errorDuration,
+            testOutput: {
+              passed: false,
+              numTests: 0,
+              numPassed: 0,
+              numFailed: 1,
+              failures: [{ testName: 'error', error: message }],
+            },
+          })
         }
       }
 
@@ -368,8 +431,191 @@ async function runCompetitionJob(jobId: string): Promise<void> {
       }
     }
 
+    // === REFINEMENT ROUND ===
+    if (refinementRound && job.results.some((r) => r.passed)) {
+      // Find the best performer from initial round
+      const passedResults = job.results.filter((r) => r.passed)
+      const rankedResults = [...passedResults].sort((a, b) => {
+        if (isReact) {
+          const aMetrics = a.metrics as { fps?: number } | undefined
+          const bMetrics = b.metrics as { fps?: number } | undefined
+          return (bMetrics?.fps ?? 0) - (aMetrics?.fps ?? 0)
+        } else {
+          const aMetrics = a.metrics as { benchmarks?: Array<{ hz: number }> } | undefined
+          const bMetrics = b.metrics as { benchmarks?: Array<{ hz: number }> } | undefined
+          return (bMetrics?.benchmarks?.[0]?.hz ?? 0) - (aMetrics?.benchmarks?.[0]?.hz ?? 0)
+        }
+      })
+
+      const winner = rankedResults[0]
+      refinementWinner = winner.model
+      const winnerMetricsRaw = winner.metrics as {
+        fps?: number
+        bundleSize?: number
+        benchmarks?: Array<{ hz: number; name?: string }>
+      } | undefined
+
+      // Load the winning solution code
+      const winnerSolutionPath = join(challengePath, 'solutions', `${winner.model}.${fileExt}`)
+      const winningSolution = await readFile(winnerSolutionPath, 'utf-8')
+
+      // Build winner metrics for prompt
+      const winnerMetrics: WinnerMetrics = {
+        benchmarks: winnerMetricsRaw?.benchmarks?.map((b) => ({
+          name: b.name ?? 'benchmark',
+          hz: b.hz,
+        })),
+        reactMetrics: winnerMetricsRaw?.fps
+          ? {
+              fps: { p95: winnerMetricsRaw.fps },
+              renders: { avgCommitTime: 0, renderCount: 0 },
+              bundle: { gzipped: winnerMetricsRaw.bundleSize ?? 0 },
+              performanceScore: winnerMetricsRaw.fps,
+            }
+          : undefined,
+      }
+
+      // Load original prompt
+      const promptPath = join(challengePath, 'prompt.md')
+      const originalPrompt = await readFile(promptPath, 'utf-8')
+
+      jobManager.updateProgress(jobId, {
+        currentModel: '',
+        currentAttempt: 0,
+        phase: 'refinement',
+        message: `Starting refinement round - all models will attempt to improve ${formatModel(winner.model)}'s winning solution...`,
+      })
+
+      for (const model of models) {
+        if (job.abortController.signal.aborted) {
+          throw new Error('Job cancelled')
+        }
+
+        const isWinner = model === winner.model
+
+        jobManager.updateProgress(jobId, {
+          currentModel: model,
+          currentAttempt: 1,
+          phase: 'refinement',
+          message: isWinner
+            ? `${formatModel(model)} (defending champion) refines their solution...`
+            : `${formatModel(model)} studies ${formatModel(winner.model)}'s approach...`,
+        })
+
+        const refinementPrompt = buildRefinementPrompt({
+          originalPrompt,
+          winningSolution,
+          winnerModel: winner.model,
+          winnerMetrics,
+          isWinner,
+          challengeType: challengeConfig.type,
+        })
+
+        try {
+          const code = await generateSolution({
+            model,
+            challenge,
+            customPrompt: refinementPrompt,
+          })
+
+          // Write refined solution
+          const refinedSolutionPath = join(challengePath, 'solutions', `${model}-refined.${fileExt}`)
+          await writeFile(refinedSolutionPath, code)
+
+          // Write as active solution for testing
+          const activeSolutionPath = join(challengePath, `solution.${fileExt}`)
+          await writeFile(activeSolutionPath, code)
+
+          // Test refined solution
+          jobManager.updateProgress(jobId, {
+            phase: 'testing',
+            message: `Testing ${formatModel(model)}'s refined solution...`,
+          })
+
+          const testResult = await runTests(challenge)
+
+          if (testResult.passed) {
+            if (isReact) {
+              const perfMetrics = await runPerfTest({
+                componentPath: activeSolutionPath,
+                thresholds: challengeConfig.performanceThresholds,
+              })
+
+              const improvement = calculateImprovement(winnerMetrics, { reactMetrics: perfMetrics }, 'react-component')
+
+              refinementResults.push({
+                model,
+                attempts: 1,
+                passed: perfMetrics.passed,
+                reactMetrics: perfMetrics,
+                codeSize: code.length,
+                isRefinement: true,
+                refinedFrom: winner.model,
+              })
+
+              jobManager.updateProgress(jobId, {
+                phase: 'refinement',
+                message: `${formatModel(model)} ${improvement.improved ? 'improved' : 'did not improve'}: ${improvement.description}`,
+              })
+            } else {
+              const benchResult = await runBenchmarks(challenge)
+              const improvement = calculateImprovement(winnerMetrics, { benchmarks: benchResult }, 'function')
+
+              refinementResults.push({
+                model,
+                attempts: 1,
+                passed: true,
+                benchmarks: benchResult,
+                codeSize: code.length,
+                isRefinement: true,
+                refinedFrom: winner.model,
+              })
+
+              jobManager.updateProgress(jobId, {
+                phase: 'refinement',
+                message: `${formatModel(model)} ${improvement.improved ? 'improved' : 'did not improve'}: ${improvement.description}`,
+              })
+            }
+          } else {
+            refinementResults.push({
+              model,
+              attempts: 1,
+              passed: false,
+              codeSize: code.length,
+              error: testResult.errors.join('\n').slice(0, 500),
+              isRefinement: true,
+              refinedFrom: winner.model,
+            })
+
+            jobManager.updateProgress(jobId, {
+              phase: 'refinement',
+              message: `${formatModel(model)}'s refinement failed tests`,
+            })
+          }
+        } catch (err) {
+          const message = err instanceof Error ? err.message : String(err)
+          refinementResults.push({
+            model,
+            attempts: 1,
+            passed: false,
+            error: message.slice(0, 500),
+            isRefinement: true,
+            refinedFrom: winner.model,
+          })
+        }
+      }
+    }
+
     // Record results
-    await recordResult(challenge, job.results as any, { maxAttempts, models }, challengeConfig.type)
+    await recordResult({
+      challenge,
+      results: job.results as any,
+      config: { maxAttempts, models },
+      type: challengeConfig.type,
+      refinementEnabled: refinementRound,
+      refinementResults: refinementResults.length > 0 ? refinementResults : undefined,
+      refinementWinner,
+    })
 
     jobManager.completeJob(jobId)
   } catch (err) {

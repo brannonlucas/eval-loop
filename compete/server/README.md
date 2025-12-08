@@ -236,7 +236,9 @@ Run a full competition with multiple AI models. Returns Server-Sent Events for r
   "challenge": "virtualized-list",
   "models": ["sonnet", "gpt4", "opus"],
   "maxAttempts": 3,
-  "stream": true
+  "stream": true,
+  "debug": false,
+  "refinementRound": false
 }
 ```
 
@@ -246,6 +248,8 @@ Run a full competition with multiple AI models. Returns Server-Sent Events for r
 | `models` | string[] | No | Models to compete (default: all) |
 | `maxAttempts` | number | No | Max attempts per model (default: 3) |
 | `stream` | boolean | No | Use SSE streaming (default: true) |
+| `debug` | boolean | No | Save debug artifacts (solutions, vitest output) |
+| `refinementRound` | boolean | No | Enable refinement round where models improve winning solution |
 
 **SSE Events:**
 
@@ -254,7 +258,7 @@ event: job_created
 data: {"jobId":"abc123"}
 
 event: progress
-data: {"currentModel":"sonnet","currentAttempt":1,"phase":"generating","message":"Generating solution..."}
+data: {"currentModel":"sonnet","currentAttempt":1,"phase":"generating","message":"Generating solution...","isRefinement":false}
 
 event: model_complete
 data: {"model":"sonnet","passed":true,"score":87,"attempts":1}
@@ -265,6 +269,21 @@ data: {"results":[...]}
 event: error
 data: {"error":"Something went wrong"}
 ```
+
+**Refinement Round Events** (when `refinementRound: true`):
+
+```
+event: refinement_start
+data: {"winner":"sonnet","winnerScore":88}
+
+event: progress
+data: {"currentModel":"gpt4","currentAttempt":1,"phase":"refinement","message":"Improving winning solution...","isRefinement":true}
+
+event: refinement_result
+data: {"model":"gpt4","improved":true,"originalScore":88,"refinedScore":92,"improvement":"+4.5%"}
+```
+
+**Phase Values:** `setup`, `generating`, `writing`, `testing`, `benchmarking`, `analyzing`, `refinement`
 
 **Polling Fallback:**
 
@@ -322,6 +341,83 @@ Cancel a running job.
   "jobId": "abc123"
 }
 ```
+
+---
+
+### Get Job Debug Info
+
+```bash
+GET /api/jobs/:id/debug
+GET /api/jobs/:id/debug?model=sonnet
+```
+
+Get detailed debug information for a completed or failed job. Includes full solutions, test outputs, prompts, and timing for each attempt. Useful for debugging test failures and prompt engineering.
+
+| Query Param | Type | Description |
+|-------------|------|-------------|
+| `model` | string | Filter to a specific model (e.g., `sonnet`, `opus`) |
+
+**Response:**
+
+```json
+{
+  "jobId": "abc123",
+  "challenge": "fastest-sort",
+  "timestamp": "2024-01-15T10:30:00Z",
+  "models": {
+    "sonnet": {
+      "attempts": [
+        {
+          "attemptNumber": 1,
+          "solution": "export function solution(arr) { ... }",
+          "testOutput": {
+            "passed": false,
+            "numTests": 5,
+            "numPassed": 3,
+            "numFailed": 2,
+            "failures": [
+              {
+                "testName": "handles empty array",
+                "error": "Expected [] but received undefined",
+                "expected": "[]",
+                "received": "undefined"
+              }
+            ]
+          },
+          "prompt": "Implement a sorting function...",
+          "feedback": null,
+          "duration": 2340
+        },
+        {
+          "attemptNumber": 2,
+          "solution": "export function solution(arr) { if (!arr.length) return []; ... }",
+          "testOutput": {
+            "passed": true,
+            "numTests": 5,
+            "numPassed": 5,
+            "numFailed": 0,
+            "failures": []
+          },
+          "prompt": "Implement a sorting function...",
+          "feedback": "Previous attempt failed: Expected [] but received undefined",
+          "duration": 1890
+        }
+      ],
+      "finalStatus": "passed"
+    }
+  },
+  "promptMd": "# Challenge: Fastest Sort\n\nImplement a function...",
+  "config": {
+    "type": "function",
+    "maxAttempts": 3
+  }
+}
+```
+
+**Error Responses:**
+
+- `400` - Job is still running (must wait for completion)
+- `404` - Job not found or no debug info available
 
 ---
 
