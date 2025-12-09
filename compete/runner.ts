@@ -1,31 +1,50 @@
 #!/usr/bin/env bun
 import { parseArgs } from 'util'
-import { writeFile, mkdir } from 'fs/promises'
+import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
 import { generateSolution, type ModelId } from './lib/ai-generator'
 import { runTests, runBenchmarks, type TestRunOptions } from './lib/vitest-runner'
-import { recordResult, getLeaderboard, printResults, type ModelResult } from './lib/results'
-import { loadChallengeConfig, isReactChallenge } from './lib/challenge-config'
+import {
+  recordResult,
+  getLeaderboard,
+  printResults,
+  getBestResultsPerModel,
+  type ModelResult,
+} from './lib/results'
+import { loadChallengeConfig, isReactChallenge, assertChallengeValid } from './lib/challenge-config'
 import { runPerfTest } from './lib/playwright-runner'
 import type { ReactPerfMetrics } from './lib/react-metrics'
+import { calculatePerfScore } from './lib/react-metrics'
 import {
   setupExternalWorkspace,
   cleanupOldWorkspaces,
   isExternalRepoChallenge,
   type WorkspaceContext,
 } from './lib/workspace'
+import {
+  buildRefinementPrompt,
+  calculateImprovement,
+  type WinnerMetrics,
+} from './lib/refinement-prompt'
 
 interface CompetitionConfig {
   challenge: string
   models: ModelId[]
   maxAttempts: number
+  refinementRound?: boolean
 }
 
 const DEFAULT_MODELS: ModelId[] = ['sonnet', 'gpt4']
 const DEFAULT_MAX_ATTEMPTS = 5
 
-async function runCompetition(config: CompetitionConfig): Promise<ModelResult[]> {
-  const { challenge, models, maxAttempts } = config
+interface CompetitionResults {
+  initial: ModelResult[]
+  refinement?: ModelResult[]
+  refinementWinner?: string
+}
+
+async function runCompetition(config: CompetitionConfig): Promise<CompetitionResults> {
+  const { challenge, models, maxAttempts, refinementRound } = config
   const results: ModelResult[] = []
 
   // Clean up old workspaces at start
@@ -34,6 +53,10 @@ async function runCompetition(config: CompetitionConfig): Promise<ModelResult[]>
   // Load challenge config to determine type
   const challengePath = join(process.cwd(), 'compete/challenges', challenge)
   const challengeConfig = await loadChallengeConfig(challengePath)
+
+  // Validate challenge has required files before starting
+  assertChallengeValid(challengePath, challengeConfig)
+
   const isReact = isReactChallenge(challengeConfig)
   const isExternal = isExternalRepoChallenge(challengeConfig)
   const fileExt = isReact ? 'tsx' : 'ts'
@@ -170,7 +193,7 @@ async function runCompetition(config: CompetitionConfig): Promise<ModelResult[]>
           attempts,
           passed: false,
           codeSize: lastCode.length,
-          error: feedback.slice(0, 500),
+          error: feedback.slice(0, 2000),
         })
         console.log(`  Failed after ${maxAttempts} attempts`)
       }
@@ -183,10 +206,180 @@ async function runCompetition(config: CompetitionConfig): Promise<ModelResult[]>
     }
   }
 
-  // Save results
-  await recordResult(challenge, results, { maxAttempts, models }, challengeConfig.type)
+  // === REFINEMENT ROUND ===
+  let refinementResults: ModelResult[] | undefined
+  let refinementWinner: string | undefined
 
-  return results
+  if (refinementRound && results.some((r) => r.passed)) {
+    // Find the best performer from initial round
+    const passedResults = results.filter((r) => r.passed)
+    const rankedResults = [...passedResults].sort((a, b) => {
+      if (isReact) {
+        const aScore = a.reactMetrics ? calculatePerfScore(a.reactMetrics) : 0
+        const bScore = b.reactMetrics ? calculatePerfScore(b.reactMetrics) : 0
+        return bScore - aScore
+      } else {
+        const aHz = a.benchmarks?.[0]?.hz ?? 0
+        const bHz = b.benchmarks?.[0]?.hz ?? 0
+        return bHz - aHz
+      }
+    })
+
+    const winner = rankedResults[0]
+    refinementWinner = winner.model
+
+    // Load the winning solution code
+    const winnerSolutionPath = join(
+      process.cwd(),
+      'compete/challenges',
+      challenge,
+      'solutions',
+      `${winner.model}.${fileExt}`
+    )
+    const winningSolution = await readFile(winnerSolutionPath, 'utf-8')
+
+    // Build winner metrics for prompt
+    const winnerMetrics: WinnerMetrics = {
+      benchmarks: winner.benchmarks,
+      reactMetrics: winner.reactMetrics
+        ? {
+            fps: winner.reactMetrics.fps,
+            renders: winner.reactMetrics.renders,
+            bundle: winner.reactMetrics.bundle,
+            performanceScore: calculatePerfScore(winner.reactMetrics),
+          }
+        : undefined,
+    }
+
+    // Load original prompt
+    const promptPath = join(challengePath, 'prompt.md')
+    const originalPrompt = await readFile(promptPath, 'utf-8')
+
+    console.log(`\n${'═'.repeat(50)}`)
+    console.log('           REFINEMENT ROUND')
+    console.log(`${'═'.repeat(50)}`)
+    console.log(`  Reference: ${winner.model}'s solution`)
+    if (isReact && winner.reactMetrics) {
+      console.log(`  Score: ${calculatePerfScore(winner.reactMetrics)}`)
+    } else if (winner.benchmarks?.[0]) {
+      console.log(`  Performance: ${winner.benchmarks[0].hz.toLocaleString()} ops/sec`)
+    }
+    console.log('')
+
+    refinementResults = []
+
+    for (const model of models) {
+      const isWinner = model === winner.model
+      console.log(`--- ${model.toUpperCase()} ${isWinner ? '(defending)' : ''} ---`)
+
+      const refinementPrompt = buildRefinementPrompt({
+        originalPrompt,
+        winningSolution,
+        winnerModel: winner.model,
+        winnerMetrics,
+        isWinner,
+        challengeType: challengeConfig.type,
+      })
+
+      try {
+        console.log('  Generating refined solution...')
+        const code = await generateSolution({
+          model,
+          challenge,
+          customPrompt: refinementPrompt,
+        })
+
+        // Write refined solution
+        const refinedSolutionPath = join(
+          process.cwd(),
+          'compete/challenges',
+          challenge,
+          'solutions',
+          `${model}-refined.${fileExt}`
+        )
+        await writeFile(refinedSolutionPath, code)
+
+        // Write as active solution for testing
+        const activeSolutionPath = join(challengePath, `solution.${fileExt}`)
+        await writeFile(activeSolutionPath, code)
+
+        // Test refined solution
+        console.log('  Running tests...')
+        const testResult = await runTests(challenge)
+
+        if (testResult.passed) {
+          console.log('  Tests PASSED!')
+
+          if (isReact) {
+            const perfMetrics = await runReactPerfTest(activeSolutionPath, challengeConfig)
+            const improvement = calculateImprovement(winnerMetrics, { reactMetrics: perfMetrics }, 'react-component')
+
+            refinementResults.push({
+              model,
+              attempts: 1,
+              passed: perfMetrics.passed,
+              reactMetrics: perfMetrics,
+              codeSize: code.length,
+              isRefinement: true,
+              refinedFrom: winner.model,
+            })
+
+            console.log(`  ${improvement.improved ? '✓ improved' : '✗ not improved'}: ${improvement.description}`)
+          } else {
+            const benchResult = await runBenchmarks(challenge)
+            const improvement = calculateImprovement(winnerMetrics, { benchmarks: benchResult }, 'function')
+
+            refinementResults.push({
+              model,
+              attempts: 1,
+              passed: true,
+              benchmarks: benchResult,
+              codeSize: code.length,
+              isRefinement: true,
+              refinedFrom: winner.model,
+            })
+
+            console.log(`  ${improvement.improved ? '✓ improved' : '✗ not improved'}: ${improvement.description}`)
+          }
+        } else {
+          console.log('  Tests FAILED (refinement rejected)')
+          refinementResults.push({
+            model,
+            attempts: 1,
+            passed: false,
+            codeSize: code.length,
+            error: testResult.errors.join('\n').slice(0, 2000),
+            isRefinement: true,
+            refinedFrom: winner.model,
+          })
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err)
+        console.log(`  Error: ${message}`)
+        refinementResults.push({
+          model,
+          attempts: 1,
+          passed: false,
+          error: message.slice(0, 2000),
+          isRefinement: true,
+          refinedFrom: winner.model,
+        })
+      }
+    }
+  }
+
+  // Save results
+  await recordResult({
+    challenge,
+    results,
+    config: { maxAttempts, models },
+    type: challengeConfig.type,
+    refinementEnabled: refinementRound,
+    refinementResults,
+    refinementWinner,
+  })
+
+  return { initial: results, refinement: refinementResults, refinementWinner }
 }
 
 async function runReactPerfTest(
@@ -225,6 +418,7 @@ async function main() {
       challenge: { type: 'string', short: 'c' },
       models: { type: 'string', short: 'm' },
       attempts: { type: 'string', short: 'a' },
+      refine: { type: 'boolean', short: 'r' },
       leaderboard: { type: 'boolean', short: 'l' },
       help: { type: 'boolean', short: 'h' },
     },
@@ -237,23 +431,44 @@ AI Code Competition Runner
 Usage:
   bun run compete --challenge <name> [options]
 
+Quick Start:
+  1. Set up API keys in .env (see .env.example)
+  2. Run: bun run compete -c fastest-sort
+
 Options:
   -c, --challenge <name>   Challenge to run (required)
   -m, --models <list>      Comma-separated list of models (default: sonnet,gpt4)
   -a, --attempts <n>       Max attempts per model (default: 5)
+  -r, --refine             Enable refinement round after initial competition
   -l, --leaderboard        Show leaderboard for challenge
   -h, --help               Show this help
 
-Available models: sonnet, opus, gpt4, gemini
+Available models:
+  sonnet   Claude Sonnet 4 (Anthropic) - requires ANTHROPIC_API_KEY
+  opus     Claude Opus 4.5 (Anthropic) - requires ANTHROPIC_API_KEY
+  gpt4     GPT-4o (OpenAI) - requires OPENAI_API_KEY
+  gemini   Gemini 1.5 Pro (Google) - requires GOOGLE_API_KEY
 
 Challenge Types:
-  - function: Traditional algorithm challenges (vitest benchmarks)
-  - react-component: React component challenges (Playwright FPS/render tests)
+  function         Algorithm challenges with vitest benchmarks (ops/sec)
+  react-component  React component challenges with Playwright perf tests (FPS)
+
+Challenge Structure:
+  compete/challenges/<name>/
+    prompt.md         AI prompt template (required)
+    spec.test.ts(x)   Correctness tests (required)
+    spec.bench.ts     Performance benchmarks (optional, function type)
+    challenge.config.json  Custom config (optional)
 
 Examples:
-  bun run compete -c fastest-sort
-  bun run compete -c virtualized-list -m sonnet,gpt4,opus -a 3
-  bun run compete -c virtualized-list --leaderboard
+  bun run compete -c fastest-sort                    # Basic competition
+  bun run compete -c fastest-sort -m opus -a 1      # Single model, 1 attempt
+  bun run compete -c fastest-sort --refine          # With refinement round
+  bun run compete -c virtualized-list -m sonnet,gpt4,opus
+  bun run compete -c fastest-sort --leaderboard     # View past results
+
+Dashboard:
+  bun run serve   # Start web dashboard at http://localhost:3456
 `)
     return
   }
@@ -277,13 +492,21 @@ Examples:
     ? parseInt(values.attempts, 10)
     : DEFAULT_MAX_ATTEMPTS
 
-  const results = await runCompetition({
+  const competitionResults = await runCompetition({
     challenge: values.challenge,
     models,
     maxAttempts,
+    refinementRound: values.refine,
   })
 
-  printResults(results)
+  // Print initial round results
+  printResults(competitionResults.initial)
+
+  // Print refinement results if enabled
+  if (competitionResults.refinement && competitionResults.refinement.length > 0) {
+    console.log('\n=== Refinement Round Results ===\n')
+    printResults(competitionResults.refinement)
+  }
 }
 
 main().catch(console.error)

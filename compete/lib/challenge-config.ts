@@ -9,6 +9,17 @@ import { existsSync } from 'fs'
 import { readFile } from 'fs/promises'
 import { join } from 'path'
 
+export class ChallengeValidationError extends Error {
+  constructor(
+    message: string,
+    public readonly challengePath: string,
+    public readonly missingFiles?: string[]
+  ) {
+    super(message)
+    this.name = 'ChallengeValidationError'
+  }
+}
+
 export type ChallengeType = 'function' | 'react-component'
 
 export interface PerformanceThresholds {
@@ -29,6 +40,8 @@ export interface ExternalRepoConfig {
   testPath: string
   /** Path where the AI solution should be written, relative to external repo */
   solutionPath: string
+  /** Additional paths (files or directories) to copy into the workspace */
+  copyPaths?: string[]
 }
 
 export interface ChallengeConfig {
@@ -113,4 +126,62 @@ async function detectChallengeType(challengePath: string): Promise<ChallengeType
  */
 export function isReactChallenge(config: ChallengeConfig): boolean {
   return config.type === 'react-component'
+}
+
+/**
+ * Validate that a challenge has all required files
+ * Returns an array of validation errors (empty if valid)
+ */
+export function validateChallenge(challengePath: string, config?: ChallengeConfig): string[] {
+  const errors: string[] = []
+
+  // Check challenge directory exists
+  if (!existsSync(challengePath)) {
+    errors.push(`Challenge directory not found: ${challengePath}`)
+    return errors
+  }
+
+  // Check for prompt.md (required for all challenges)
+  const promptPath = join(challengePath, 'prompt.md')
+  if (!existsSync(promptPath)) {
+    errors.push(`Missing prompt.md - this file defines the challenge for AI models`)
+  }
+
+  // Check for test file (spec.test.ts or spec.test.tsx)
+  const tsTest = join(challengePath, 'spec.test.ts')
+  const tsxTest = join(challengePath, 'spec.test.tsx')
+  if (!existsSync(tsTest) && !existsSync(tsxTest)) {
+    errors.push(`Missing spec.test.ts or spec.test.tsx - this file contains the correctness tests`)
+  }
+
+  // If external repo config, validate those paths
+  if (config?.externalRepo) {
+    const ext = config.externalRepo
+
+    if (!existsSync(ext.path)) {
+      errors.push(`External repo path not found: ${ext.path}`)
+    } else {
+      // Check test path relative to external repo
+      const testPath = join(ext.path, ext.testPath)
+      if (!existsSync(testPath)) {
+        errors.push(`External test file not found: ${ext.testPath} (resolved: ${testPath})`)
+      }
+    }
+  }
+
+  return errors
+}
+
+/**
+ * Validate challenge and throw if invalid
+ */
+export function assertChallengeValid(challengePath: string, config?: ChallengeConfig): void {
+  const errors = validateChallenge(challengePath, config)
+  if (errors.length > 0) {
+    throw new ChallengeValidationError(
+      `Challenge validation failed:\n  - ${errors.join('\n  - ')}`,
+      challengePath,
+      errors
+    )
+  }
 }
