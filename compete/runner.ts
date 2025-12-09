@@ -2,7 +2,7 @@
 import { parseArgs } from 'util'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
-import { generateSolution, type ModelId } from './lib/ai-generator'
+import { generateSolution, validateApiKeys, type ModelId } from './lib/ai-generator'
 import { runTests, runBenchmarks, type TestRunOptions } from './lib/vitest-runner'
 import {
   recordResult,
@@ -56,6 +56,17 @@ async function runCompetition(config: CompetitionConfig): Promise<CompetitionRes
 
   // Validate challenge has required files before starting
   assertChallengeValid(challengePath, challengeConfig)
+
+  // Validate API keys for all requested models before starting
+  const missingKeys = validateApiKeys(models)
+  if (missingKeys.length > 0) {
+    console.error('\nMissing API keys:')
+    for (const key of missingKeys) {
+      console.error(`  - ${key}`)
+    }
+    console.error('\nAdd these to your .env file (see .env.example)')
+    process.exit(1)
+  }
 
   const isReact = isReactChallenge(challengeConfig)
   const isExternal = isExternalRepoChallenge(challengeConfig)
