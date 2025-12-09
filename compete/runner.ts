@@ -26,6 +26,7 @@ import {
   calculateImprovement,
   type WinnerMetrics,
 } from './lib/refinement-prompt'
+import { scaffoldChallenge, type ChallengeTemplate } from './lib/scaffold'
 
 interface CompetitionConfig {
   challenge: string
@@ -423,8 +424,52 @@ async function runReactPerfTest(
 }
 
 async function main() {
+  const args = process.argv.slice(2)
+
+  // Check for init command (positional argument)
+  if (args[0] === 'init') {
+    const initArgs = args.slice(1)
+    const challengeName = initArgs.find(arg => !arg.startsWith('-'))
+    const typeArg = initArgs.find(arg => arg.startsWith('--type='))
+    const typeFlag = typeArg?.split('=')[1] as ChallengeTemplate | undefined
+
+    // Check for -t shorthand
+    const tIndex = initArgs.indexOf('-t')
+    const shortType = tIndex !== -1 ? initArgs[tIndex + 1] as ChallengeTemplate : undefined
+
+    const type = typeFlag || shortType || 'function'
+
+    if (!challengeName) {
+      console.log(`
+Usage: bun run compete init <name> [--type=function|react]
+
+Create a new challenge with template files.
+
+Arguments:
+  <name>              Name for the challenge (kebab-case recommended)
+
+Options:
+  -t, --type=<type>   Challenge type: function (default) or react
+
+Examples:
+  bun run compete init my-algorithm
+  bun run compete init my-component --type=react
+  bun run compete init sorting-challenge -t function
+`)
+      return
+    }
+
+    if (type !== 'function' && type !== 'react') {
+      console.error(`Invalid type '${type}'. Must be 'function' or 'react'.`)
+      process.exit(1)
+    }
+
+    await scaffoldChallenge({ name: challengeName, type })
+    return
+  }
+
   const { values } = parseArgs({
-    args: process.argv.slice(2),
+    args,
     options: {
       challenge: { type: 'string', short: 'c' },
       models: { type: 'string', short: 'm' },
@@ -441,13 +486,17 @@ AI Code Competition Runner
 
 Usage:
   bun run compete --challenge <name> [options]
+  bun run compete init <name> [--type=function|react]
 
 Quick Start:
   1. Set up API keys in .env (see .env.example)
   2. Run: bun run compete -c fastest-sort
 
+Commands:
+  init <name>              Create a new challenge from template
+
 Options:
-  -c, --challenge <name>   Challenge to run (required)
+  -c, --challenge <name>   Challenge to run (required for competitions)
   -m, --models <list>      Comma-separated list of models (default: sonnet,gpt4)
   -a, --attempts <n>       Max attempts per model (default: 5)
   -r, --refine             Enable refinement round after initial competition
