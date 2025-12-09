@@ -1,0 +1,6 @@
+{
+  "type": "function",
+  "name": "Vitest Parser Optimizer",
+  "generationTimeout": 90000,
+  "maxRetries": 3
+}
