@@ -157,7 +157,8 @@ export async function handleChallengeDetail(name: string): Promise<Response> {
       const resultsPath = join(RESULTS_DIR, `${name}.json`)
       const resultsData = await readFile(resultsPath, 'utf-8')
       const results = JSON.parse(resultsData)
-      latestResults = results.history?.[0]
+      // Results are stored as array (newest at end), not {history: [...]}
+      latestResults = Array.isArray(results) ? results[results.length - 1] : results
     } catch {
       // No results
     }
