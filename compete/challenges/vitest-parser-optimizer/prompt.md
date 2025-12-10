@@ -2,6 +2,18 @@
 
 **YOU ARE COMPETING AGAINST OTHER AI MODELS.** This is a head-to-head competition where your solution will be benchmarked against Claude Sonnet 4, Claude Opus 4.5, and GPT-4o. The winner is determined by correctness first, then raw performance on parsing vitest output.
 
+**IMPORTANT**: A working solution is provided below. Your task is to OPTIMIZE it for maximum performance while maintaining 100% correctness. The tests are comprehensive - if you break any behavior, you lose.
+
+## Current Baseline Performance
+
+The provided solution achieves:
+- parse small JSON (10 tests): ~4.9M ops/sec
+- parse large JSON (1000 tests): ~67K ops/sec
+- parse all passing (100 tests): ~2.5M ops/sec
+- parse all failing (100 tests): ~86K ops/sec (30x slower due to regex)
+
+**Your goal**: Beat these numbers while passing all 45 tests.
+
 Optimize a TypeScript module that parses vitest JSON reporter output into structured test failure information.
 
 ## Requirements
@@ -70,6 +82,17 @@ export function parseVitestOutput(stdout: string): ParsedTestOutput | null
 - Must export exact interfaces and function signatures above
 - Must handle all edge cases (the tests are comprehensive)
 
+## CRITICAL - DO NOT CHANGE THESE STRINGS
+
+The tests check exact error messages. These strings MUST remain exactly as shown:
+
+1. `ERROR_RESULT.failures[0].error` MUST be exactly `'Invalid JSON input'`
+2. `parseVitestJsonString` error message MUST start with `'Failed to parse JSON: '`
+3. Default failure error MUST be `'Test failed'`
+4. Default testName MUST be `'unknown'`
+
+**DO NOT "optimize" or shorten error messages - this will fail the tests.**
+
 ## Scoring
 
 Your solution will be scored on:
@@ -79,19 +102,22 @@ Your solution will be scored on:
 
 ## Optimization Opportunities
 
-The current implementation has room for improvement:
-- Regex patterns are compiled on every call
-- Multiple passes over the same data
-- String operations that could be optimized
-- Type checking that could be streamlined
+The baseline already has pre-compiled regex patterns. Focus on:
+- **The 30x gap**: All-failing is 30x slower than all-passing due to `extractExpectedReceived` regex calls
+- **Regex efficiency**: Can you use indexOf/substring instead of regex for simple patterns?
+- **Loop unrolling**: The nested loops over testResults and assertionResults
+- **Object creation**: Minimize intermediate object allocations
+- **String operations**: `.split('\n')` creates many strings - can you avoid it?
+- **Early termination**: Return early when you know the answer
 
 ## Tips
 
-- Pre-compile regex patterns outside functions
-- Consider early returns for common cases
-- Minimize string allocations
-- Think about the order of checks (most common first)
-- Profile before optimizing - measure what's actually slow
+- The biggest win is likely in `extractExpectedReceived` - called for every failure
+- Consider using `indexOf` + `substring` instead of regex for fixed patterns
+- Avoid creating arrays/objects you don't need
+- Use `for` loops with cached `.length` instead of `for...of`
+- Consider inlining small helper functions
+- The tests are strict - don't change any output format or behavior
 
 ## Previous Attempt Feedback
 
