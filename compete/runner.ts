@@ -27,6 +27,7 @@ import {
   type WinnerMetrics,
 } from './lib/refinement-prompt'
 import { scaffoldChallenge, type ChallengeTemplate } from './lib/scaffold'
+import { linkExternalRepo, showLinkHelp } from './lib/link-external'
 
 interface CompetitionConfig {
   challenge: string
@@ -468,6 +469,61 @@ Examples:
     return
   }
 
+  // Check for link command (positional argument)
+  if (args[0] === 'link') {
+    const linkArgs = args.slice(1)
+
+    // Check for --help
+    if (linkArgs.includes('--help') || linkArgs.includes('-h')) {
+      showLinkHelp()
+      return
+    }
+
+    const repoPath = linkArgs.find((arg) => !arg.startsWith('-'))
+    const challengeArg = linkArgs.find((arg) => arg.startsWith('--name='))
+    const challengeNameFlag = challengeArg?.split('=')[1]
+
+    // Check for -n shorthand
+    const nIndex = linkArgs.indexOf('-n')
+    const shortName = nIndex !== -1 ? linkArgs[nIndex + 1] : undefined
+
+    // Challenge name can be second positional arg or via flag
+    const positionalArgs = linkArgs.filter((arg) => !arg.startsWith('-'))
+    const challengeName = challengeNameFlag || shortName || positionalArgs[1]
+
+    // Test file option
+    const testArg = linkArgs.find((arg) => arg.startsWith('--test='))
+    const testFileFlag = testArg?.split('=')[1]
+    const tIndex = linkArgs.indexOf('--test')
+    const testFile = testFileFlag || (tIndex !== -1 ? linkArgs[tIndex + 1] : undefined)
+
+    // Type option
+    const typeArg = linkArgs.find((arg) => arg.startsWith('--type='))
+    const typeFlag = typeArg?.split('=')[1] as 'function' | 'react-component' | undefined
+
+    if (!repoPath || !challengeName) {
+      console.log(`
+Usage: bun run compete link <repo-path> <challenge-name> [options]
+
+Run 'bun run compete link --help' for full documentation.
+`)
+      return
+    }
+
+    try {
+      await linkExternalRepo({
+        repoPath,
+        challengeName,
+        testFile,
+        type: typeFlag,
+      })
+    } catch (err) {
+      console.error(`\nError: ${err instanceof Error ? err.message : String(err)}`)
+      process.exit(1)
+    }
+    return
+  }
+
   const { values } = parseArgs({
     args,
     options: {
@@ -487,6 +543,7 @@ AI Code Competition Runner
 Usage:
   bun run compete --challenge <name> [options]
   bun run compete init <name> [--type=function|react]
+  bun run compete link <repo-path> <name> [options]
 
 Quick Start:
   1. Set up API keys in .env (see .env.example)
@@ -494,6 +551,7 @@ Quick Start:
 
 Commands:
   init <name>              Create a new challenge from template
+  link <repo> <name>       Connect an external repository as a challenge
 
 Options:
   -c, --challenge <name>   Challenge to run (required for competitions)
@@ -526,6 +584,8 @@ Examples:
   bun run compete -c fastest-sort --refine          # With refinement round
   bun run compete -c virtualized-list -m sonnet,gpt4,opus
   bun run compete -c fastest-sort --leaderboard     # View past results
+  bun run compete init my-algorithm                  # Create new challenge
+  bun run compete link ../my-repo my-challenge       # Link external repo
 
 Dashboard:
   bun run serve   # Start web dashboard at http://localhost:3456
