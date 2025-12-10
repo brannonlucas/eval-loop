@@ -14,6 +14,10 @@ export interface ModelResult {
   tokensUsed?: number
   duration?: number
   error?: string
+  /** Was this result from the refinement round? */
+  isRefinement?: boolean
+  /** Which model's solution was used as the reference (for refinement round) */
+  refinedFrom?: string
 }
 
 export interface CompetitionResult {
@@ -25,25 +29,50 @@ export interface CompetitionResult {
     models: string[]
   }
   results: ModelResult[]
+  /** Was refinement round enabled? */
+  refinementEnabled?: boolean
+  /** Results from refinement round (separate from initial) */
+  refinementResults?: ModelResult[]
+  /** Which model's solution was used as reference for refinement */
+  refinementWinner?: string
 }
 
 const RESULTS_DIR = join(process.cwd(), 'compete/results')
 
+export interface RecordResultOptions {
+  challenge: string
+  results: ModelResult[]
+  config: { maxAttempts: number; models: string[] }
+  type?: 'function' | 'react-component'
+  refinementEnabled?: boolean
+  refinementResults?: ModelResult[]
+  refinementWinner?: string
+}
+
 export async function recordResult(
-  challenge: string,
-  results: ModelResult[],
-  config: { maxAttempts: number; models: string[] },
+  optionsOrChallenge: RecordResultOptions | string,
+  results?: ModelResult[],
+  config?: { maxAttempts: number; models: string[] },
   type: 'function' | 'react-component' = 'function'
 ): Promise<void> {
+  // Support both old signature and new options object
+  const opts: RecordResultOptions =
+    typeof optionsOrChallenge === 'string'
+      ? { challenge: optionsOrChallenge, results: results!, config: config!, type }
+      : optionsOrChallenge
+
   const result: CompetitionResult = {
-    challenge,
+    challenge: opts.challenge,
     timestamp: new Date().toISOString(),
-    type,
-    config,
-    results,
+    type: opts.type ?? 'function',
+    config: opts.config,
+    results: opts.results,
+    refinementEnabled: opts.refinementEnabled,
+    refinementResults: opts.refinementResults,
+    refinementWinner: opts.refinementWinner,
   }
 
-  const filePath = join(RESULTS_DIR, `${challenge}.json`)
+  const filePath = join(RESULTS_DIR, `${opts.challenge}.json`)
 
   // Ensure directory exists
   await mkdir(dirname(filePath), { recursive: true })
@@ -67,6 +96,61 @@ export async function recordResult(
   }
 
   await writeFile(filePath, JSON.stringify(history, null, 2))
+}
+
+/**
+ * Compare two ModelResults and return the better one.
+ * Uses challenge type to determine comparison metrics.
+ */
+export function getBestResult(
+  initial: ModelResult | undefined,
+  refined: ModelResult | undefined,
+  challengeType: 'function' | 'react-component'
+): ModelResult & { source: 'initial' | 'refined' } {
+  // If only one exists, return it
+  if (!initial && !refined) throw new Error('At least one result required')
+  if (!initial) return { ...refined!, source: 'refined' }
+  if (!refined) return { ...initial, source: 'initial' }
+
+  // If one passed and one failed, prefer the passing one
+  if (initial.passed && !refined.passed) return { ...initial, source: 'initial' }
+  if (!initial.passed && refined.passed) return { ...refined!, source: 'refined' }
+
+  // Both passed or both failed - compare by performance
+  if (challengeType === 'function') {
+    const initialHz = initial.benchmarks?.[0]?.hz ?? 0
+    const refinedHz = refined.benchmarks?.[0]?.hz ?? 0
+    return refinedHz > initialHz
+      ? { ...refined!, source: 'refined' }
+      : { ...initial, source: 'initial' }
+  }
+
+  // React component - compare by performance score
+  const initialScore = initial.reactMetrics ? calculatePerfScore(initial.reactMetrics) : 0
+  const refinedScore = refined.reactMetrics ? calculatePerfScore(refined.reactMetrics) : 0
+  return refinedScore > initialScore
+    ? { ...refined!, source: 'refined' }
+    : { ...initial, source: 'initial' }
+}
+
+/**
+ * Get the best results for each model from initial and refinement rounds
+ */
+export function getBestResultsPerModel(
+  initialResults: ModelResult[],
+  refinementResults: ModelResult[] | undefined,
+  challengeType: 'function' | 'react-component'
+): Array<ModelResult & { source: 'initial' | 'refined' }> {
+  const models = new Set([
+    ...initialResults.map((r) => r.model),
+    ...(refinementResults?.map((r) => r.model) ?? []),
+  ])
+
+  return Array.from(models).map((model) => {
+    const initial = initialResults.find((r) => r.model === model)
+    const refined = refinementResults?.find((r) => r.model === model)
+    return getBestResult(initial, refined, challengeType)
+  })
 }
 
 export async function getLeaderboard(challenge: string): Promise<void> {

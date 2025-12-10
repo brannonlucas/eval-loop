@@ -8,9 +8,14 @@
  *   compete/.tmp/{challengeName}-{timestamp}/
  *   ├── {solutionDir}/solution.ts(x)   - AI-generated solution
  *   ├── {testDir}/spec.test.ts(x)      - Copied test files
+ *   ├── {copyPaths...}                 - Additional dependencies (via copyPaths)
  *   ├── node_modules -> symlink        - From external repo
  *   ├── vitest.config.ts               - Copied from challenge
  *   └── tsconfig.json                  - Copied from external repo
+ *
+ * The copyPaths option allows specifying additional files or directories
+ * from the external repo that should be copied into the workspace (e.g.,
+ * utility modules, type definitions, or shared dependencies).
  */
 
 import { mkdir, cp, symlink, rm, copyFile, readdir, stat, writeFile } from 'fs/promises'
@@ -84,6 +89,31 @@ export async function setupExternalWorkspace(
     await copyDirectoryContents(sourceTestDir, destTestDir)
   }
   const testPath = join(workspacePath, externalRepo.testPath)
+
+  // 2.5 Copy additional dependency paths specified in copyPaths
+  if (externalRepo.copyPaths && externalRepo.copyPaths.length > 0) {
+    for (const copyPath of externalRepo.copyPaths) {
+      const sourcePath = join(externalRepoPath, copyPath)
+      const destPath = join(workspacePath, copyPath)
+
+      if (!existsSync(sourcePath)) {
+        console.warn(`  [Workspace] Warning: copyPath not found: ${copyPath}`)
+        continue
+      }
+
+      const sourceStat = await stat(sourcePath)
+
+      if (sourceStat.isDirectory()) {
+        // Copy entire directory
+        await mkdir(dirname(destPath), { recursive: true })
+        await copyDirectoryContents(sourcePath, destPath)
+      } else {
+        // Copy single file
+        await mkdir(dirname(destPath), { recursive: true })
+        await copyFile(sourcePath, destPath)
+      }
+    }
+  }
 
   // 3. Copy vitest config from challenge directory
   const challengeVitestConfig = join(challengePath, 'vitest.config.ts')
