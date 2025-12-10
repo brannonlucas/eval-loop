@@ -37,3 +37,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 outputs/
 .promptfoo/
 *.promptfoo.yaml.cache
+
+# Debug artifacts
+compete/debug/
