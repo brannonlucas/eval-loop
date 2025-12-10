@@ -4,8 +4,12 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   test: {
-    // Include both TS and TSX test files
-    include: ['compete/challenges/**/spec.test.{ts,tsx}'],
+    // Include challenge spec tests AND unit tests for lib/server
+    include: [
+      'compete/challenges/**/spec.test.{ts,tsx}',
+      'compete/lib/__tests__/**/*.test.ts',
+      'compete/server/__tests__/**/*.test.ts',
+    ],
     testTimeout: 30000,
     reporters: ['verbose'],
 

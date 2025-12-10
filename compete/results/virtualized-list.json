@@ -533,5 +533,141 @@
         "duration": 888
       }
     ]
+  },
+  {
+    "challenge": "virtualized-list",
+    "timestamp": "2025-12-07T21:49:31.379Z",
+    "type": "react-component",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "reactMetrics": {
+          "fps": {
+            "min": 96.15384615384112,
+            "max": 158.73015873015416,
+            "avg": 120.81971392124366,
+            "p95": 102.04081632652871,
+            "frameCount": 1077,
+            "duration": 17953.59
+          },
+          "renders": {
+            "renderCount": 148,
+            "totalCommitTime": 71.00000047683716,
+            "avgCommitTime": 0.47972973295160243,
+            "componentRenders": {
+              "component-under-test": 148
+            }
+          },
+          "bundle": {
+            "raw": 641,
+            "gzipped": 412
+          },
+          "memory": {
+            "heapStart": 3896984,
+            "heapEnd": 0,
+            "heapPeak": 0,
+            "growth": -3896984,
+            "stable": true
+          },
+          "passed": true,
+          "thresholds": {
+            "fps": {
+              "passed": true,
+              "target": 55,
+              "actual": 102.04081632652871
+            },
+            "renders": {
+              "passed": true,
+              "target": 1,
+              "actual": 0.47972973295160243
+            },
+            "bundle": {
+              "passed": true,
+              "target": 1024,
+              "actual": 412
+            },
+            "memory": {
+              "passed": true,
+              "target": 1048576,
+              "actual": -3896984
+            }
+          }
+        },
+        "codeSize": 1365,
+        "duration": 906
+      }
+    ],
+    "refinementEnabled": true,
+    "refinementResults": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "reactMetrics": {
+          "fps": {
+            "min": 96.15384615384112,
+            "max": 156.24999999999778,
+            "avg": 120.77845263802476,
+            "p95": 102.04081632653346,
+            "frameCount": 1083,
+            "duration": 18053.61
+          },
+          "renders": {
+            "renderCount": 132,
+            "totalCommitTime": 71.19999980926514,
+            "avgCommitTime": 0.5393939379489783,
+            "componentRenders": {
+              "component-under-test": 132
+            }
+          },
+          "bundle": {
+            "raw": 633,
+            "gzipped": 409
+          },
+          "memory": {
+            "heapStart": 3823256,
+            "heapEnd": 0,
+            "heapPeak": 0,
+            "growth": -3823256,
+            "stable": true
+          },
+          "passed": true,
+          "thresholds": {
+            "fps": {
+              "passed": true,
+              "target": 55,
+              "actual": 102.04081632653346
+            },
+            "renders": {
+              "passed": true,
+              "target": 1,
+              "actual": 0.5393939379489783
+            },
+            "bundle": {
+              "passed": true,
+              "target": 1024,
+              "actual": 409
+            },
+            "memory": {
+              "passed": true,
+              "target": 1048576,
+              "actual": -3823256
+            }
+          }
+        },
+        "codeSize": 1287,
+        "isRefinement": true,
+        "refinedFrom": "sonnet"
+      }
+    ],
+    "refinementWinner": "sonnet"
   }
 ]

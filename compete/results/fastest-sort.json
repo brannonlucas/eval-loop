@@ -93,5 +93,332 @@
         "duration": 840
       }
     ]
+  },
+  {
+    "challenge": "fastest-sort",
+    "timestamp": "2025-12-06T21:50:43.672Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": []
+        }
+      }
+    ]
+  },
+  {
+    "challenge": "fastest-sort",
+    "timestamp": "2025-12-06T22:03:37.868Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": []
+        }
+      }
+    ]
+  },
+  {
+    "challenge": "fastest-sort",
+    "timestamp": "2025-12-06T22:09:25.022Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": []
+        }
+      }
+    ]
+  },
+  {
+    "challenge": "fastest-sort",
+    "timestamp": "2025-12-07T21:07:50.960Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 2,
+      "models": [
+        "sonnet",
+        "gpt4"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 94,
+        "duration": 1551
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 299,
+        "duration": 919
+      }
+    ],
+    "refinementEnabled": true,
+    "refinementResults": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": false,
+        "codeSize": 1206,
+        "error": "{\"numTotalTestSuites\":2,\"numPassedTestSuites\":0,\"numFailedTestSuites\":2,\"numPendingTestSuites\":0,\"numTotalTests\":10,\"numPassedTests\":3,\"numFailedTests\":7,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765141667923,\"success\":false,\"testResults\":[{\"assertionResults",
+        "isRefinement": true,
+        "refinedFrom": "sonnet"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": false,
+        "codeSize": 216,
+        "error": "{\"numTotalTestSuites\":2,\"numPassedTestSuites\":0,\"numFailedTestSuites\":2,\"numPendingTestSuites\":0,\"numTotalTests\":10,\"numPassedTests\":9,\"numFailedTests\":1,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765141670603,\"success\":false,\"testResults\":[{\"assertionResults",
+        "isRefinement": true,
+        "refinedFrom": "sonnet"
+      }
+    ],
+    "refinementWinner": "sonnet"
+  },
+  {
+    "challenge": "fastest-sort",
+    "timestamp": "2025-12-07T21:29:53.113Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 2,
+      "models": [
+        "sonnet",
+        "gpt4"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 96,
+        "duration": 1091
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 265,
+        "duration": 927
+      }
+    ],
+    "refinementEnabled": true,
+    "refinementResults": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 600,
+        "isRefinement": true,
+        "refinedFrom": "sonnet"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 239,
+        "isRefinement": true,
+        "refinedFrom": "sonnet"
+      }
+    ],
+    "refinementWinner": "sonnet"
+  },
+  {
+    "challenge": "fastest-sort",
+    "timestamp": "2025-12-07T21:35:10.044Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 2,
+      "models": [
+        "sonnet",
+        "gpt4"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "sort 1k items (random)",
+            "hz": 5687.6,
+            "mean": 0.1758,
+            "p75": 0.1773,
+            "p99": 0.2338
+          },
+          {
+            "name": "sort 10k items (random)",
+            "hz": 421.12,
+            "mean": 2.3746,
+            "p75": 2.2647,
+            "p99": 5.3388
+          },
+          {
+            "name": "sort 100k items (random)",
+            "hz": 32.5173,
+            "mean": 30.7529,
+            "p75": 32.7502,
+            "p99": 35.6628
+          },
+          {
+            "name": "sort 10k items (already sorted)",
+            "hz": 2751.25,
+            "mean": 0.3635,
+            "p75": 0.369,
+            "p99": 0.4107
+          },
+          {
+            "name": "sort 10k items (reverse sorted)",
+            "hz": 2649.26,
+            "mean": 0.3775,
+            "p75": 0.3829,
+            "p99": 0.4243
+          }
+        ],
+        "codeSize": 97,
+        "duration": 934
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "sort 1k items (random)",
+            "hz": 5690.28,
+            "mean": 0.1757,
+            "p75": 0.1778,
+            "p99": 0.2385
+          },
+          {
+            "name": "sort 10k items (random)",
+            "hz": 450.39,
+            "mean": 2.2203,
+            "p75": 2.2512,
+            "p99": 2.513
+          },
+          {
+            "name": "sort 100k items (random)",
+            "hz": 32.817,
+            "mean": 30.472,
+            "p75": 31.7797,
+            "p99": 35.6441
+          },
+          {
+            "name": "sort 10k items (already sorted)",
+            "hz": 2698.2,
+            "mean": 0.3706,
+            "p75": 0.376,
+            "p99": 0.4161
+          },
+          {
+            "name": "sort 10k items (reverse sorted)",
+            "hz": 2611.21,
+            "mean": 0.383,
+            "p75": 0.3893,
+            "p99": 0.4618
+          }
+        ],
+        "codeSize": 259,
+        "duration": 977
+      }
+    ],
+    "refinementEnabled": true,
+    "refinementResults": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [],
+        "codeSize": 1612,
+        "isRefinement": true,
+        "refinedFrom": "gpt4"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "sort 1k items (random)",
+            "hz": 4715.09,
+            "mean": 0.2121,
+            "p75": 0.218,
+            "p99": 0.3021
+          },
+          {
+            "name": "sort 10k items (random)",
+            "hz": 373.45,
+            "mean": 2.6777,
+            "p75": 2.747,
+            "p99": 2.999
+          },
+          {
+            "name": "sort 100k items (random)",
+            "hz": 29.6219,
+            "mean": 33.7588,
+            "p75": 34.3866,
+            "p99": 34.7965
+          },
+          {
+            "name": "sort 10k items (already sorted)",
+            "hz": 231.67,
+            "mean": 4.3164,
+            "p75": 4.3906,
+            "p99": 4.635
+          },
+          {
+            "name": "sort 10k items (reverse sorted)",
+            "hz": 232.23,
+            "mean": 4.306,
+            "p75": 4.3856,
+            "p99": 4.6906
+          }
+        ],
+        "codeSize": 588,
+        "isRefinement": true,
+        "refinedFrom": "gpt4"
+      }
+    ],
+    "refinementWinner": "gpt4"
   }
 ]

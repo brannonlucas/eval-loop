@@ -1,0 +1,534 @@
+[
+  {
+    "challenge": "bench-output-parser",
+    "timestamp": "2025-12-09T21:46:07.945Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet",
+        "gpt4",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 1972,
+        "error": "{\"numTotalTestSuites\":9,\"numPassedTestSuites\":6,\"numFailedTestSuites\":3,\"numPendingTestSuites\":0,\"numTotalTests\":28,\"numPassedTests\":25,\"numFailedTests\":3,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765316614692,\"success\":false,\"testResults\":[{\"assertionResult"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 1512,
+        "error": "{\"numTotalTestSuites\":9,\"numPassedTestSuites\":5,\"numFailedTestSuites\":4,\"numPendingTestSuites\":0,\"numTotalTests\":28,\"numPassedTests\":26,\"numFailedTests\":2,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765316712275,\"success\":false,\"testResults\":[{\"assertionResult"
+      },
+      {
+        "model": "opus",
+        "attempts": 2,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 93941.4,
+            "mean": 0.0106,
+            "p75": 0.0106,
+            "p99": 0.0137
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 20743.7,
+            "mean": 0.0482,
+            "p75": 0.0486,
+            "p99": 0.0605
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 5320.44,
+            "mean": 0.188,
+            "p75": 0.1888,
+            "p99": 0.3109
+          },
+          {
+            "name": "huge output (500 benchmarks)",
+            "hz": 2126.31,
+            "mean": 0.4703,
+            "p75": 0.4708,
+            "p99": 0.7405
+          },
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 185989.29,
+            "mean": 0.0054,
+            "p75": 0.0053,
+            "p99": 0.0069
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 40712,
+            "mean": 0.0246,
+            "p75": 0.0244,
+            "p99": 0.0305
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 10171.74,
+            "mean": 0.0983,
+            "p75": 0.0973,
+            "p99": 0.1403
+          },
+          {
+            "name": "empty string",
+            "hz": 18698013.4,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "single benchmark line",
+            "hz": 2325890.26,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0006
+          },
+          {
+            "name": "ops/sec fallback format",
+            "hz": 3430693.56,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          }
+        ],
+        "codeSize": 1967,
+        "duration": 916
+      }
+    ]
+  },
+  {
+    "challenge": "bench-output-parser",
+    "timestamp": "2025-12-09T21:51:58.325Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet",
+        "gpt4",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 2045,
+        "error": "{\"numTotalTestSuites\":9,\"numPassedTestSuites\":0,\"numFailedTestSuites\":9,\"numPendingTestSuites\":0,\"numTotalTests\":28,\"numPassedTests\":3,\"numFailedTests\":25,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765316976769,\"success\":false,\"testResults\":[{\"assertionResult"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 83763.97,
+            "mean": 0.0119,
+            "p75": 0.0118,
+            "p99": 0.0215
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 18476.05,
+            "mean": 0.0541,
+            "p75": 0.0534,
+            "p99": 0.0991
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 4738.38,
+            "mean": 0.211,
+            "p75": 0.2097,
+            "p99": 0.3536
+          },
+          {
+            "name": "huge output (500 benchmarks)",
+            "hz": 1922.9,
+            "mean": 0.52,
+            "p75": 0.5241,
+            "p99": 0.7498
+          },
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 156774.73,
+            "mean": 0.0064,
+            "p75": 0.0063,
+            "p99": 0.0081
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 33160.69,
+            "mean": 0.0302,
+            "p75": 0.0298,
+            "p99": 0.0453
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 8336.94,
+            "mean": 0.1199,
+            "p75": 0.119,
+            "p99": 0.2529
+          },
+          {
+            "name": "empty string",
+            "hz": 10377351.7,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "single benchmark line",
+            "hz": 1909710.8,
+            "mean": 0.0005,
+            "p75": 0.0005,
+            "p99": 0.0007
+          },
+          {
+            "name": "ops/sec fallback format",
+            "hz": 3851907.34,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          }
+        ],
+        "codeSize": 2163,
+        "duration": 1121
+      },
+      {
+        "model": "opus",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 106920.61,
+            "mean": 0.0094,
+            "p75": 0.0093,
+            "p99": 0.0127
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 23074.8,
+            "mean": 0.0433,
+            "p75": 0.0432,
+            "p99": 0.0588
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 5894.14,
+            "mean": 0.1697,
+            "p75": 0.169,
+            "p99": 0.3266
+          },
+          {
+            "name": "huge output (500 benchmarks)",
+            "hz": 2363.12,
+            "mean": 0.4232,
+            "p75": 0.4186,
+            "p99": 0.702
+          },
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 219735.35,
+            "mean": 0.0046,
+            "p75": 0.0045,
+            "p99": 0.0058
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 44680.96,
+            "mean": 0.0224,
+            "p75": 0.0218,
+            "p99": 0.0385
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 11658.33,
+            "mean": 0.0858,
+            "p75": 0.0855,
+            "p99": 0.1252
+          },
+          {
+            "name": "empty string",
+            "hz": 18955785.31,
+            "mean": 0.0001,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "single benchmark line",
+            "hz": 2361684.7,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0006
+          },
+          {
+            "name": "ops/sec fallback format",
+            "hz": 3698636.74,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          }
+        ],
+        "codeSize": 2587,
+        "duration": 1064
+      }
+    ],
+    "refinementEnabled": true,
+    "refinementResults": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 101093.48,
+            "mean": 0.0099,
+            "p75": 0.0096,
+            "p99": 0.0165
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 21508.17,
+            "mean": 0.0465,
+            "p75": 0.0438,
+            "p99": 0.1361
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 5802.87,
+            "mean": 0.1723,
+            "p75": 0.1717,
+            "p99": 0.3316
+          },
+          {
+            "name": "huge output (500 benchmarks)",
+            "hz": 2294.6,
+            "mean": 0.4358,
+            "p75": 0.4293,
+            "p99": 0.7496
+          },
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 211487.45,
+            "mean": 0.0047,
+            "p75": 0.0047,
+            "p99": 0.006
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 42773.59,
+            "mean": 0.0234,
+            "p75": 0.0224,
+            "p99": 0.0418
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 11486.77,
+            "mean": 0.0871,
+            "p75": 0.0882,
+            "p99": 0.1056
+          },
+          {
+            "name": "empty string",
+            "hz": 20132735.36,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "single benchmark line",
+            "hz": 2410209.77,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0005
+          },
+          {
+            "name": "ops/sec fallback format",
+            "hz": 3524395.27,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          }
+        ],
+        "codeSize": 3610,
+        "isRefinement": true,
+        "refinedFrom": "opus"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 106794.2,
+            "mean": 0.0094,
+            "p75": 0.0093,
+            "p99": 0.0123
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 23032.48,
+            "mean": 0.0434,
+            "p75": 0.0432,
+            "p99": 0.0608
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 5914.94,
+            "mean": 0.1691,
+            "p75": 0.1691,
+            "p99": 0.2765
+          },
+          {
+            "name": "huge output (500 benchmarks)",
+            "hz": 2371.56,
+            "mean": 0.4217,
+            "p75": 0.4208,
+            "p99": 0.7139
+          },
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 211986.94,
+            "mean": 0.0047,
+            "p75": 0.0046,
+            "p99": 0.0059
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 44611.42,
+            "mean": 0.0224,
+            "p75": 0.0218,
+            "p99": 0.0425
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 11688.57,
+            "mean": 0.0856,
+            "p75": 0.0866,
+            "p99": 0.1046
+          },
+          {
+            "name": "empty string",
+            "hz": 18075171.02,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "single benchmark line",
+            "hz": 2367735.36,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0006
+          },
+          {
+            "name": "ops/sec fallback format",
+            "hz": 3885780.2,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0003
+          }
+        ],
+        "codeSize": 2432,
+        "isRefinement": true,
+        "refinedFrom": "opus"
+      },
+      {
+        "model": "opus",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 111571.58,
+            "mean": 0.009,
+            "p75": 0.0088,
+            "p99": 0.0122
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 24020.63,
+            "mean": 0.0416,
+            "p75": 0.0412,
+            "p99": 0.0701
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 6203.65,
+            "mean": 0.1612,
+            "p75": 0.162,
+            "p99": 0.2263
+          },
+          {
+            "name": "huge output (500 benchmarks)",
+            "hz": 2439.8,
+            "mean": 0.4099,
+            "p75": 0.4129,
+            "p99": 0.5614
+          },
+          {
+            "name": "small output (10 benchmarks)",
+            "hz": 133112.6,
+            "mean": 0.0075,
+            "p75": 0.0075,
+            "p99": 0.0104
+          },
+          {
+            "name": "medium output (50 benchmarks)",
+            "hz": 28562.9,
+            "mean": 0.035,
+            "p75": 0.0351,
+            "p99": 0.0463
+          },
+          {
+            "name": "large output (200 benchmarks)",
+            "hz": 6946.24,
+            "mean": 0.144,
+            "p75": 0.1425,
+            "p99": 0.2287
+          },
+          {
+            "name": "empty string",
+            "hz": 17722983.27,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "single benchmark line",
+            "hz": 1621764.49,
+            "mean": 0.0006,
+            "p75": 0.0006,
+            "p99": 0.0009
+          },
+          {
+            "name": "ops/sec fallback format",
+            "hz": 1983076.94,
+            "mean": 0.0005,
+            "p75": 0.0005,
+            "p99": 0.0007
+          }
+        ],
+        "codeSize": 6504,
+        "isRefinement": true,
+        "refinedFrom": "opus"
+      }
+    ],
+    "refinementWinner": "opus"
+  }
+]

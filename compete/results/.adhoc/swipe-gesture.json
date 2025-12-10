@@ -1,0 +1,33 @@
+[
+  {
+    "challenge": ".adhoc/swipe-gesture",
+    "timestamp": "2025-12-08T04:06:00.499Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": []
+        }
+      },
+      {
+        "model": "opus",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": []
+        }
+      }
+    ],
+    "refinementEnabled": false
+  }
+]

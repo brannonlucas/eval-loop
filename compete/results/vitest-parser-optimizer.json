@@ -1,0 +1,387 @@
+[
+  {
+    "challenge": "vitest-parser-optimizer",
+    "timestamp": "2025-12-09T19:38:50.001Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet",
+        "gpt4"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 6205,
+        "error": "{\"numTotalTestSuites\":16,\"numPassedTestSuites\":8,\"numFailedTestSuites\":8,\"numPendingTestSuites\":0,\"numTotalTests\":45,\"numPassedTests\":34,\"numFailedTests\":11,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765308990158,\"success\":false,\"testResults\":[{\"assertionResu"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 5494,
+        "error": "{\"numTotalTestSuites\":16,\"numPassedTestSuites\":6,\"numFailedTestSuites\":10,\"numPendingTestSuites\":0,\"numTotalTests\":45,\"numPassedTests\":30,\"numFailedTests\":15,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765309129625,\"success\":false,\"testResults\":[{\"assertionRes"
+      }
+    ]
+  },
+  {
+    "challenge": "vitest-parser-optimizer",
+    "timestamp": "2025-12-09T19:41:17.348Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "opus",
+        "attempts": 3,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "parse small JSON (10 tests)",
+            "hz": 4885591.43,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "parse medium JSON (100 tests)",
+            "hz": 657884.34,
+            "mean": 0.0015,
+            "p75": 0.0015,
+            "p99": 0.002
+          },
+          {
+            "name": "parse large JSON (1000 tests)",
+            "hz": 66931.41,
+            "mean": 0.0149,
+            "p75": 0.0148,
+            "p99": 0.0189
+          },
+          {
+            "name": "parse multi-file JSON (50 files, 1000 tests)",
+            "hz": 54611.72,
+            "mean": 0.0183,
+            "p75": 0.0183,
+            "p99": 0.0232
+          },
+          {
+            "name": "parse all passing (100 tests)",
+            "hz": 2504349.64,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0005
+          },
+          {
+            "name": "parse all failing (100 tests)",
+            "hz": 85762.42,
+            "mean": 0.0117,
+            "p75": 0.0116,
+            "p99": 0.0155
+          },
+          {
+            "name": "parse small JSON string (10 tests)",
+            "hz": 378996.98,
+            "mean": 0.0026,
+            "p75": 0.0026,
+            "p99": 0.0033
+          },
+          {
+            "name": "parse medium JSON string (100 tests)",
+            "hz": 46837.63,
+            "mean": 0.0214,
+            "p75": 0.0214,
+            "p99": 0.027
+          },
+          {
+            "name": "parse large JSON string (1000 tests)",
+            "hz": 4872.67,
+            "mean": 0.2052,
+            "p75": 0.2079,
+            "p99": 0.2459
+          },
+          {
+            "name": "parse all passing JSON string",
+            "hz": 52285.37,
+            "mean": 0.0191,
+            "p75": 0.019,
+            "p99": 0.0239
+          },
+          {
+            "name": "parse all failing JSON string",
+            "hz": 25349.65,
+            "mean": 0.0394,
+            "p75": 0.0395,
+            "p99": 0.0548
+          },
+          {
+            "name": "parse small console output (10 tests)",
+            "hz": 471250.56,
+            "mean": 0.0021,
+            "p75": 0.0021,
+            "p99": 0.0027
+          },
+          {
+            "name": "parse medium console output (100 tests)",
+            "hz": 51155.76,
+            "mean": 0.0195,
+            "p75": 0.0195,
+            "p99": 0.0246
+          },
+          {
+            "name": "parse large console output (500 tests)",
+            "hz": 10560.24,
+            "mean": 0.0947,
+            "p75": 0.0955,
+            "p99": 0.1245
+          },
+          {
+            "name": "handle empty object",
+            "hz": 19008867.81,
+            "mean": 0.0001,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "handle invalid input (null)",
+            "hz": 21306843.02,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "parse invalid JSON string",
+            "hz": 319925.49,
+            "mean": 0.0031,
+            "p75": 0.0031,
+            "p99": 0.0043
+          },
+          {
+            "name": "parse empty string (console output)",
+            "hz": 20246970.34,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          }
+        ],
+        "codeSize": 6709,
+        "duration": 1031
+      }
+    ]
+  },
+  {
+    "challenge": "vitest-parser-optimizer",
+    "timestamp": "2025-12-09T19:44:28.845Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 2,
+      "models": [
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "opus",
+        "attempts": 2,
+        "passed": false,
+        "codeSize": 6622,
+        "error": "{\"numTotalTestSuites\":16,\"numPassedTestSuites\":12,\"numFailedTestSuites\":4,\"numPendingTestSuites\":0,\"numTotalTests\":45,\"numPassedTests\":40,\"numFailedTests\":5,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765309468472,\"success\":false,\"testResults\":[{\"assertionResu"
+      }
+    ],
+    "refinementEnabled": true
+  },
+  {
+    "challenge": "vitest-parser-optimizer",
+    "timestamp": "2025-12-09T19:48:21.724Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 2,
+      "models": [
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "opus",
+        "attempts": 2,
+        "passed": false,
+        "codeSize": 9639,
+        "error": "{\"numTotalTestSuites\":16,\"numPassedTestSuites\":13,\"numFailedTestSuites\":3,\"numPendingTestSuites\":0,\"numTotalTests\":45,\"numPassedTests\":43,\"numFailedTests\":2,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765309701348,\"success\":false,\"testResults\":[{\"assertionResu"
+      }
+    ]
+  },
+  {
+    "challenge": "vitest-parser-optimizer",
+    "timestamp": "2025-12-09T19:52:14.278Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 2,
+      "models": [
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "opus",
+        "attempts": 2,
+        "passed": false,
+        "codeSize": 7528,
+        "error": "{\"numTotalTestSuites\":16,\"numPassedTestSuites\":13,\"numFailedTestSuites\":3,\"numPendingTestSuites\":0,\"numTotalTests\":45,\"numPassedTests\":43,\"numFailedTests\":2,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765309933910,\"success\":false,\"testResults\":[{\"assertionResu"
+      }
+    ]
+  },
+  {
+    "challenge": "vitest-parser-optimizer",
+    "timestamp": "2025-12-09T19:54:42.978Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 2,
+      "models": [
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "opus",
+        "attempts": 2,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "parse small JSON (10 tests)",
+            "hz": 5798724.53,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "parse medium JSON (100 tests)",
+            "hz": 765883.12,
+            "mean": 0.0013,
+            "p75": 0.0013,
+            "p99": 0.0017
+          },
+          {
+            "name": "parse large JSON (1000 tests)",
+            "hz": 78321.99,
+            "mean": 0.0128,
+            "p75": 0.0127,
+            "p99": 0.0161
+          },
+          {
+            "name": "parse multi-file JSON (50 files, 1000 tests)",
+            "hz": 62434.05,
+            "mean": 0.016,
+            "p75": 0.016,
+            "p99": 0.0202
+          },
+          {
+            "name": "parse all passing (100 tests)",
+            "hz": 4157369.94,
+            "mean": 0.0002,
+            "p75": 0.0003,
+            "p99": 0.0003
+          },
+          {
+            "name": "parse all failing (100 tests)",
+            "hz": 92387.46,
+            "mean": 0.0108,
+            "p75": 0.0108,
+            "p99": 0.0135
+          },
+          {
+            "name": "parse small JSON string (10 tests)",
+            "hz": 375782.87,
+            "mean": 0.0027,
+            "p75": 0.0027,
+            "p99": 0.0033
+          },
+          {
+            "name": "parse medium JSON string (100 tests)",
+            "hz": 45669.15,
+            "mean": 0.0219,
+            "p75": 0.0218,
+            "p99": 0.0265
+          },
+          {
+            "name": "parse large JSON string (1000 tests)",
+            "hz": 4811.53,
+            "mean": 0.2078,
+            "p75": 0.2077,
+            "p99": 0.2273
+          },
+          {
+            "name": "parse all passing JSON string",
+            "hz": 50033.6,
+            "mean": 0.02,
+            "p75": 0.02,
+            "p99": 0.0239
+          },
+          {
+            "name": "parse all failing JSON string",
+            "hz": 26611.88,
+            "mean": 0.0376,
+            "p75": 0.0374,
+            "p99": 0.044
+          },
+          {
+            "name": "parse small console output (10 tests)",
+            "hz": 708077.13,
+            "mean": 0.0014,
+            "p75": 0.0014,
+            "p99": 0.0018
+          },
+          {
+            "name": "parse medium console output (100 tests)",
+            "hz": 81306.06,
+            "mean": 0.0123,
+            "p75": 0.0122,
+            "p99": 0.0156
+          },
+          {
+            "name": "parse large console output (500 tests)",
+            "hz": 16568.36,
+            "mean": 0.0604,
+            "p75": 0.0601,
+            "p99": 0.0704
+          },
+          {
+            "name": "handle empty object",
+            "hz": 19051159.79,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "handle invalid input (null)",
+            "hz": 21476413.96,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "parse invalid JSON string",
+            "hz": 329593.13,
+            "mean": 0.003,
+            "p75": 0.003,
+            "p99": 0.0038
+          },
+          {
+            "name": "parse empty string (console output)",
+            "hz": 21258417.45,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          }
+        ],
+        "codeSize": 7982,
+        "duration": 1277
+      }
+    ]
+  }
+]

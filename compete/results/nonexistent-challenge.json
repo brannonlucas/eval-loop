@@ -1,0 +1,28 @@
+[
+  {
+    "challenge": "nonexistent-challenge",
+    "timestamp": "2025-12-06T21:32:32.552Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet",
+        "gpt4"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 5,
+        "error": "Error: ENOENT: no such file or directory, open '/Users/brannonlucas/Projects/eval-loop/compete/challenges/nonexistent-challenge/prompt.md'"
+      },
+      {
+        "model": "gpt4",
+        "passed": false,
+        "attempts": 5,
+        "error": "Error: ENOENT: no such file or directory, open '/Users/brannonlucas/Projects/eval-loop/compete/challenges/nonexistent-challenge/prompt.md'"
+      }
+    ]
+  }
+]

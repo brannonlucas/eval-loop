@@ -1,0 +1,29 @@
+[
+  {
+    "challenge": "swipe-gesture",
+    "timestamp": "2025-12-08T04:04:43.049Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 3,
+        "error": "Error: ENOENT: no such file or directory, open '/Users/brannonlucas/Projects/eval-loop/compete/challenges/swipe-gesture/prompt.md'"
+      },
+      {
+        "model": "opus",
+        "passed": false,
+        "attempts": 3,
+        "error": "Error: ENOENT: no such file or directory, open '/Users/brannonlucas/Projects/eval-loop/compete/challenges/swipe-gesture/prompt.md'"
+      }
+    ],
+    "refinementEnabled": false
+  }
+]

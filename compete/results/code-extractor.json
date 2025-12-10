@@ -1,0 +1,959 @@
+[
+  {
+    "challenge": "code-extractor",
+    "timestamp": "2025-12-09T20:23:31.930Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet",
+        "gpt4",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 382,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765311654660,\"success\":false,\"testResults\":[{\"assertionResults\""
+      },
+      {
+        "model": "gpt4",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 788,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765311711956,\"success\":false,\"testResults\":[{\"assertionResults\""
+      },
+      {
+        "model": "opus",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 431,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765311811567,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "code-extractor",
+    "timestamp": "2025-12-09T20:30:16.512Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet",
+        "gpt4",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 2822,
+        "error": "{\"numTotalTestSuites\":8,\"numPassedTestSuites\":5,\"numFailedTestSuites\":3,\"numPendingTestSuites\":0,\"numTotalTests\":46,\"numPassedTests\":45,\"numFailedTests\":1,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765312050217,\"success\":false,\"testResults\":[{\"assertionResult"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 1600,
+        "error": "{\"numTotalTestSuites\":8,\"numPassedTestSuites\":2,\"numFailedTestSuites\":6,\"numPendingTestSuites\":0,\"numTotalTests\":46,\"numPassedTests\":40,\"numFailedTests\":6,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765312107893,\"success\":false,\"testResults\":[{\"assertionResult"
+      },
+      {
+        "model": "opus",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 97,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765312216152,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "code-extractor",
+    "timestamp": "2025-12-09T20:47:56.911Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 2,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small typed block (10 lines)",
+            "hz": 8695393.86,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium typed block (100 lines)",
+            "hz": 5734287.21,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "large typed block (500 lines)",
+            "hz": 2681850.34,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0005
+          },
+          {
+            "name": "small generic block (10 lines)",
+            "hz": 9614013.9,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium generic block (100 lines)",
+            "hz": 6787969.51,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large generic block (500 lines)",
+            "hz": 3107638.38,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small raw code (10 lines)",
+            "hz": 11376776.95,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "medium raw code (100 lines)",
+            "hz": 7499470.22,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "large raw code (500 lines)",
+            "hz": 3147274.26,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small prose + code",
+            "hz": 1242674.98,
+            "mean": 0.0008,
+            "p75": 0.0008,
+            "p99": 0.001
+          },
+          {
+            "name": "medium prose + code",
+            "hz": 413896.27,
+            "mean": 0.0024,
+            "p75": 0.0024,
+            "p99": 0.0031
+          },
+          {
+            "name": "large prose + code",
+            "hz": 178066.1,
+            "mean": 0.0056,
+            "p75": 0.0056,
+            "p99": 0.0072
+          },
+          {
+            "name": "small Claude-style response",
+            "hz": 7905089.48,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium Claude-style response",
+            "hz": 6278750.52,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large Claude-style response",
+            "hz": 3730196.35,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small GPT-style response",
+            "hz": 7909459.34,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium GPT-style response",
+            "hz": 6128192.54,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large GPT-style response",
+            "hz": 3552026.22,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "empty string",
+            "hz": 21651069.26,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "whitespace only",
+            "hz": 17328239.51,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "plain text (no code)",
+            "hz": 4420488.47,
+            "mean": 0.0002,
+            "p75": 0.0003,
+            "p99": 0.0003
+          },
+          {
+            "name": "single line code",
+            "hz": 9048333.19,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          }
+        ],
+        "codeSize": 2616,
+        "duration": 1018
+      }
+    ]
+  },
+  {
+    "challenge": "code-extractor",
+    "timestamp": "2025-12-09T20:49:31.079Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "opus",
+        "attempts": 2,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small typed block (10 lines)",
+            "hz": 9388632.65,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium typed block (100 lines)",
+            "hz": 6389477.13,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large typed block (500 lines)",
+            "hz": 2888485.68,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0005
+          },
+          {
+            "name": "small generic block (10 lines)",
+            "hz": 9476631.7,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium generic block (100 lines)",
+            "hz": 6653099.83,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large generic block (500 lines)",
+            "hz": 3067489.55,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small raw code (10 lines)",
+            "hz": 11566650.22,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "medium raw code (100 lines)",
+            "hz": 7575203.53,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "large raw code (500 lines)",
+            "hz": 3185037.5,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small prose + code",
+            "hz": 1804626.23,
+            "mean": 0.0006,
+            "p75": 0.0005,
+            "p99": 0.0007
+          },
+          {
+            "name": "medium prose + code",
+            "hz": 679273.27,
+            "mean": 0.0015,
+            "p75": 0.0015,
+            "p99": 0.0019
+          },
+          {
+            "name": "large prose + code",
+            "hz": 301285.68,
+            "mean": 0.0033,
+            "p75": 0.0033,
+            "p99": 0.0043
+          },
+          {
+            "name": "small Claude-style response",
+            "hz": 8778332.88,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium Claude-style response",
+            "hz": 6940279.82,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large Claude-style response",
+            "hz": 3918279.94,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0003
+          },
+          {
+            "name": "small GPT-style response",
+            "hz": 8998652.9,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium GPT-style response",
+            "hz": 6664793.91,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large GPT-style response",
+            "hz": 3713817.89,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "empty string",
+            "hz": 17953134.96,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "whitespace only",
+            "hz": 17132371.01,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "plain text (no code)",
+            "hz": 5959888.9,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "single line code",
+            "hz": 9797596.51,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          }
+        ],
+        "codeSize": 2856,
+        "duration": 946
+      }
+    ]
+  },
+  {
+    "challenge": "code-extractor",
+    "timestamp": "2025-12-09T21:25:45.783Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet",
+        "gpt4",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 371,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765315260353,\"success\":false,\"testResults\":[{\"assertionResults\""
+      },
+      {
+        "model": "gpt4",
+        "attempts": 5,
+        "passed": false,
+        "codeSize": 1055,
+        "error": "{\"numTotalTestSuites\":8,\"numPassedTestSuites\":2,\"numFailedTestSuites\":6,\"numPendingTestSuites\":0,\"numTotalTests\":46,\"numPassedTests\":27,\"numFailedTests\":19,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765315324562,\"success\":false,\"testResults\":[{\"assertionResul"
+      },
+      {
+        "model": "opus",
+        "attempts": 3,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small typed block (10 lines)",
+            "hz": 7846355.2,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium typed block (100 lines)",
+            "hz": 5552627.39,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "large typed block (500 lines)",
+            "hz": 2692161.08,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0005
+          },
+          {
+            "name": "small generic block (10 lines)",
+            "hz": 8570337.97,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium generic block (100 lines)",
+            "hz": 6186263.81,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large generic block (500 lines)",
+            "hz": 2969931.66,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0005
+          },
+          {
+            "name": "small raw code (10 lines)",
+            "hz": 11337007.64,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "medium raw code (100 lines)",
+            "hz": 7409477.97,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "large raw code (500 lines)",
+            "hz": 3182931.33,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small prose + code",
+            "hz": 1901658.91,
+            "mean": 0.0005,
+            "p75": 0.0005,
+            "p99": 0.0007
+          },
+          {
+            "name": "medium prose + code",
+            "hz": 692833.33,
+            "mean": 0.0014,
+            "p75": 0.0015,
+            "p99": 0.0019
+          },
+          {
+            "name": "large prose + code",
+            "hz": 329478.38,
+            "mean": 0.003,
+            "p75": 0.003,
+            "p99": 0.0039
+          },
+          {
+            "name": "small Claude-style response",
+            "hz": 7330877.94,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium Claude-style response",
+            "hz": 5853803.86,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large Claude-style response",
+            "hz": 3653369.77,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small GPT-style response",
+            "hz": 7306008.58,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium GPT-style response",
+            "hz": 5611199.32,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "large GPT-style response",
+            "hz": 3417529.11,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "empty string",
+            "hz": 23401758,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "whitespace only",
+            "hz": 18692736.99,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "plain text (no code)",
+            "hz": 6569695.29,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "single line code",
+            "hz": 7610221.59,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          }
+        ],
+        "codeSize": 3975,
+        "duration": 1042
+      }
+    ],
+    "refinementEnabled": true,
+    "refinementResults": [
+      {
+        "model": "sonnet",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small typed block (10 lines)",
+            "hz": 7904369.73,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium typed block (100 lines)",
+            "hz": 5285320.18,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "large typed block (500 lines)",
+            "hz": 2681585.4,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0005
+          },
+          {
+            "name": "small generic block (10 lines)",
+            "hz": 10241219.53,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "medium generic block (100 lines)",
+            "hz": 6921442.78,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large generic block (500 lines)",
+            "hz": 3144584.08,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small raw code (10 lines)",
+            "hz": 12330356.05,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "medium raw code (100 lines)",
+            "hz": 7867435.87,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "large raw code (500 lines)",
+            "hz": 3212234.95,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small prose + code",
+            "hz": 2005039.17,
+            "mean": 0.0005,
+            "p75": 0.0005,
+            "p99": 0.0006
+          },
+          {
+            "name": "medium prose + code",
+            "hz": 684292.67,
+            "mean": 0.0015,
+            "p75": 0.0015,
+            "p99": 0.0019
+          },
+          {
+            "name": "large prose + code",
+            "hz": 290167.7,
+            "mean": 0.0034,
+            "p75": 0.0034,
+            "p99": 0.0044
+          },
+          {
+            "name": "small Claude-style response",
+            "hz": 6742708.58,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium Claude-style response",
+            "hz": 5670473.94,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "large Claude-style response",
+            "hz": 3568841.29,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small GPT-style response",
+            "hz": 6923268.99,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium GPT-style response",
+            "hz": 5477322.63,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0003
+          },
+          {
+            "name": "large GPT-style response",
+            "hz": 3367296.84,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "empty string",
+            "hz": 23137163.95,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "whitespace only",
+            "hz": 21100099.83,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "plain text (no code)",
+            "hz": 6390859.68,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "single line code",
+            "hz": 7993867.49,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          }
+        ],
+        "codeSize": 6792,
+        "isRefinement": true,
+        "refinedFrom": "opus"
+      },
+      {
+        "model": "gpt4",
+        "attempts": 1,
+        "passed": false,
+        "codeSize": 2220,
+        "error": "{\"numTotalTestSuites\":8,\"numPassedTestSuites\":5,\"numFailedTestSuites\":3,\"numPendingTestSuites\":0,\"numTotalTests\":46,\"numPassedTests\":44,\"numFailedTests\":2,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765315487668,\"success\":false,\"testResults\":[{\"assertionResult",
+        "isRefinement": true,
+        "refinedFrom": "opus"
+      },
+      {
+        "model": "opus",
+        "attempts": 1,
+        "passed": true,
+        "benchmarks": [
+          {
+            "name": "small typed block (10 lines)",
+            "hz": 9857812.72,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium typed block (100 lines)",
+            "hz": 6605225.79,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large typed block (500 lines)",
+            "hz": 2878476.86,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0005
+          },
+          {
+            "name": "small generic block (10 lines)",
+            "hz": 9736886.91,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "medium generic block (100 lines)",
+            "hz": 6846516.27,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large generic block (500 lines)",
+            "hz": 3075064.11,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small raw code (10 lines)",
+            "hz": 11354083.7,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "medium raw code (100 lines)",
+            "hz": 7495479.7,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "large raw code (500 lines)",
+            "hz": 3113912.52,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0004
+          },
+          {
+            "name": "small prose + code",
+            "hz": 5722727.77,
+            "mean": 0.0002,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium prose + code",
+            "hz": 2362543.39,
+            "mean": 0.0004,
+            "p75": 0.0004,
+            "p99": 0.0005
+          },
+          {
+            "name": "large prose + code",
+            "hz": 1069632.84,
+            "mean": 0.0009,
+            "p75": 0.0009,
+            "p99": 0.0012
+          },
+          {
+            "name": "small Claude-style response",
+            "hz": 8990078.58,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium Claude-style response",
+            "hz": 7002139.27,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large Claude-style response",
+            "hz": 3973747.95,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0003
+          },
+          {
+            "name": "small GPT-style response",
+            "hz": 9343374.69,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0002
+          },
+          {
+            "name": "medium GPT-style response",
+            "hz": 6877878.38,
+            "mean": 0.0001,
+            "p75": 0.0002,
+            "p99": 0.0002
+          },
+          {
+            "name": "large GPT-style response",
+            "hz": 3816272.21,
+            "mean": 0.0003,
+            "p75": 0.0003,
+            "p99": 0.0003
+          },
+          {
+            "name": "empty string",
+            "hz": 20784383.21,
+            "mean": 0,
+            "p75": 0,
+            "p99": 0.0001
+          },
+          {
+            "name": "whitespace only",
+            "hz": 15040003.64,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "plain text (no code)",
+            "hz": 11705980.43,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          },
+          {
+            "name": "single line code",
+            "hz": 10360283.5,
+            "mean": 0.0001,
+            "p75": 0.0001,
+            "p99": 0.0001
+          }
+        ],
+        "codeSize": 5256,
+        "isRefinement": true,
+        "refinedFrom": "opus"
+      }
+    ],
+    "refinementWinner": "opus"
+  }
+]

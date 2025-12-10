@@ -11,6 +11,7 @@
     "cache:clear": "promptfoo cache clear",
     "compete": "bun run compete/runner.ts",
     "server": "bun run compete/server/index.ts",
+    "server:dev": "bun --watch run compete/server/index.ts",
     "test": "vitest run",
     "bench": "vitest bench"
   },

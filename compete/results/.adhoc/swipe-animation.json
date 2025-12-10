@@ -1,0 +1,147 @@
+[
+  {
+    "challenge": ".adhoc/swipe-animation",
+    "timestamp": "2025-12-08T04:21:01.632Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": [
+            {
+              "name": "calculateDragOpacity - 100k calls",
+              "hz": 1443.73,
+              "mean": 0.6927,
+              "p75": 0.7341,
+              "p99": 0.7966
+            },
+            {
+              "name": "calculateLeftChoiceOpacity - 100k calls",
+              "hz": 1483.07,
+              "mean": 0.6743,
+              "p75": 0.7045,
+              "p99": 0.7577
+            },
+            {
+              "name": "calculateRightChoiceOpacity - 100k calls",
+              "hz": 1476.47,
+              "mean": 0.6773,
+              "p75": 0.7047,
+              "p99": 0.75
+            },
+            {
+              "name": "calculateRotation - 100k calls",
+              "hz": 1401.97,
+              "mean": 0.7133,
+              "p75": 0.7204,
+              "p99": 0.7711
+            },
+            {
+              "name": "getPositionStyle - 100k calls",
+              "hz": 608.4,
+              "mean": 1.6437,
+              "p75": 1.6619,
+              "p99": 1.7329
+            },
+            {
+              "name": "calculateExitPosition - 100k calls",
+              "hz": 1205.16,
+              "mean": 0.8298,
+              "p75": 0.8349,
+              "p99": 1.1439
+            },
+            {
+              "name": "All calculations per frame - 10k frames",
+              "hz": 2824.98,
+              "mean": 0.354,
+              "p75": 0.349,
+              "p99": 0.4978
+            },
+            {
+              "name": "60fps simulation (1000 frames)",
+              "hz": 32228.13,
+              "mean": 0.031,
+              "p75": 0.0308,
+              "p99": 0.0387
+            }
+          ]
+        }
+      },
+      {
+        "model": "opus",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": [
+            {
+              "name": "calculateDragOpacity - 100k calls",
+              "hz": 1249.23,
+              "mean": 0.8005,
+              "p75": 0.8047,
+              "p99": 0.8623
+            },
+            {
+              "name": "calculateLeftChoiceOpacity - 100k calls",
+              "hz": 1477.54,
+              "mean": 0.6768,
+              "p75": 0.7046,
+              "p99": 0.7609
+            },
+            {
+              "name": "calculateRightChoiceOpacity - 100k calls",
+              "hz": 1471.49,
+              "mean": 0.6796,
+              "p75": 0.7055,
+              "p99": 0.7506
+            },
+            {
+              "name": "calculateRotation - 100k calls",
+              "hz": 1026.32,
+              "mean": 0.9744,
+              "p75": 0.9828,
+              "p99": 1.0531
+            },
+            {
+              "name": "getPositionStyle - 100k calls",
+              "hz": 362.3,
+              "mean": 2.7601,
+              "p75": 2.7843,
+              "p99": 2.908
+            },
+            {
+              "name": "calculateExitPosition - 100k calls",
+              "hz": 1189.44,
+              "mean": 0.8407,
+              "p75": 0.8626,
+              "p99": 1.0214
+            },
+            {
+              "name": "All calculations per frame - 10k frames",
+              "hz": 2505.63,
+              "mean": 0.3991,
+              "p75": 0.4069,
+              "p99": 0.5188
+            },
+            {
+              "name": "60fps simulation (1000 frames)",
+              "hz": 29548.67,
+              "mean": 0.0338,
+              "p75": 0.0337,
+              "p99": 0.0417
+            }
+          ]
+        }
+      }
+    ],
+    "refinementEnabled": false
+  }
+]

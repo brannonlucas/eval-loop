@@ -24,5 +24,288 @@
         "error": "{\"numTotalTestSuites\":0,\"numPassedTestSuites\":0,\"numFailedTestSuites\":0,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765053201854,\"success\":false,\"testResults\":[]}\n"
       }
     ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T21:26:52.135Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 3,
+        "error": "{\"numTotalTestSuites\":0,\"numPassedTestSuites\":0,\"numFailedTestSuites\":0,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765056412115,\"success\":false,\"testResults\":[]}\n"
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T21:31:00.742Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 3,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765056660564,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T21:56:12.992Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 5,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765058172822,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T22:00:27.322Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 1,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765058427150,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T22:01:54.302Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 5,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 5,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765058514127,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T22:14:26.010Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 1,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765059265821,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T22:18:14.803Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 1,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765059494511,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T22:32:44.153Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 1,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765060363961,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T22:35:11.963Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 1,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765060511736,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T22:37:06.116Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 1,
+      "models": [
+        "sonnet"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": []
+        }
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-06T22:40:25.243Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "opus",
+        "sonnet",
+        "gpt4"
+      ]
+    },
+    "results": [
+      {
+        "model": "opus",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": []
+        }
+      },
+      {
+        "model": "sonnet",
+        "passed": true,
+        "attempts": 1,
+        "metrics": {
+          "benchmarks": []
+        }
+      },
+      {
+        "model": "gpt4",
+        "passed": false,
+        "attempts": 3,
+        "error": "{\"numTotalTestSuites\":5,\"numPassedTestSuites\":0,\"numFailedTestSuites\":5,\"numPendingTestSuites\":0,\"numTotalTests\":14,\"numPassedTests\":0,\"numFailedTests\":14,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765060825066,\"success\":false,\"testResults\":[{\"assertionResult"
+      }
+    ]
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-08T02:33:07.188Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 3,
+        "error": "{\"numTotalTestSuites\":11,\"numPassedTestSuites\":0,\"numFailedTestSuites\":11,\"numPendingTestSuites\":0,\"numTotalTests\":30,\"numPassedTests\":0,\"numFailedTests\":30,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765161049813,\"success\":false,\"testResults\":[{\"assertionResu"
+      },
+      {
+        "model": "opus",
+        "passed": false,
+        "attempts": 3,
+        "error": "{\"numTotalTestSuites\":11,\"numPassedTestSuites\":0,\"numFailedTestSuites\":11,\"numPendingTestSuites\":0,\"numTotalTests\":30,\"numPassedTests\":0,\"numFailedTests\":30,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765161186984,\"success\":false,\"testResults\":[{\"assertionResu"
+      }
+    ],
+    "refinementEnabled": false
+  },
+  {
+    "challenge": "results-calculation",
+    "timestamp": "2025-12-08T02:38:05.647Z",
+    "type": "function",
+    "config": {
+      "maxAttempts": 3,
+      "models": [
+        "sonnet",
+        "opus"
+      ]
+    },
+    "results": [
+      {
+        "model": "sonnet",
+        "passed": false,
+        "attempts": 3,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765161375466,\"success\":false,\"testResults\":[{\"assertionResults\""
+      },
+      {
+        "model": "opus",
+        "passed": false,
+        "attempts": 3,
+        "error": "{\"numTotalTestSuites\":1,\"numPassedTestSuites\":0,\"numFailedTestSuites\":1,\"numPendingTestSuites\":0,\"numTotalTests\":0,\"numPassedTests\":0,\"numFailedTests\":0,\"numPendingTests\":0,\"numTodoTests\":0,\"snapshot\":{\"added\":0,\"failure\":false,\"filesAdded\":0,\"filesRemoved\":0,\"filesRemovedList\":[],\"filesUnmatched\":0,\"filesUpdated\":0,\"matched\":0,\"total\":0,\"unchecked\":0,\"uncheckedKeysByFile\":[],\"unmatched\":0,\"updated\":0,\"didUpdate\":false},\"startTime\":1765161485471,\"success\":false,\"testResults\":[{\"assertionResults\""
+      }
+    ],
+    "refinementEnabled": false
   }
 ]
