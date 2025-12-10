@@ -18,7 +18,11 @@ cp .env.example .env
 bun run compete -c fastest-sort
 ```
 
-See [GETTING_STARTED.md](./GETTING_STARTED.md) for the full walkthrough.
+**New to eval-loop?** Start here:
+- [GETTING_STARTED.md](./GETTING_STARTED.md) - Full walkthrough from zero to first competition
+- [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - Common issues and solutions
+- [docs/CHALLENGE_CONFIG.md](./docs/CHALLENGE_CONFIG.md) - Configuration reference
+- [docs/EXAMPLES.md](./docs/EXAMPLES.md) - API client examples
 
 ## Compete System
 
@@ -46,14 +50,14 @@ bun run compete --help
 ### Web Dashboard
 
 ```bash
-bun run serve
+bun compete/server/index.ts
 # Open http://localhost:3456
 ```
 
 The dashboard provides:
 - Real-time competition progress via SSE
 - Results history and leaderboards
-- Debug information for failures
+- Click any result to see full error details and re-run
 
 ### Available Models
 
@@ -71,6 +75,17 @@ The dashboard provides:
 
 ### Creating Challenges
 
+```bash
+# Scaffold a new function challenge
+bun run compete init my-algorithm
+
+# Scaffold a React component challenge
+bun run compete init my-component --type=react
+
+# Link an existing repo's tests as a challenge
+bun run compete link /path/to/repo my-challenge
+```
+
 Challenges live in `compete/challenges/<name>/`:
 
 ```
@@ -81,7 +96,7 @@ compete/challenges/my-challenge/
   challenge.config.json  # Custom configuration (optional)
 ```
 
-See existing challenges for examples.
+See [docs/CHALLENGE_CONFIG.md](./docs/CHALLENGE_CONFIG.md) for all configuration options.
 
 ---
 
