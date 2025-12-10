@@ -588,7 +588,7 @@ Examples:
   bun run compete link ../my-repo my-challenge       # Link external repo
 
 Dashboard:
-  bun run serve   # Start web dashboard at http://localhost:3456
+  bun compete/server/index.ts   # Start web dashboard at http://localhost:3456
 `)
     return
   }

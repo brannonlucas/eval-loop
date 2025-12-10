@@ -12,6 +12,7 @@ const state = {
   selectedChallenge: null,
   activeJobs: new Map(),
   results: [],
+  expandedResults: new Set(), // Track which result rows are expanded
 }
 
 // DOM Elements
@@ -369,28 +370,34 @@ function populateChallengeDropdowns() {
 // Results
 async function loadResults() {
   try {
-    const allResults = []
-    for (const challenge of state.challenges) {
-      try {
-        const detail = await api.challengeDetail(challenge.name)
-        if (detail.latestResults) {
-          const result = detail.latestResults
-          for (const r of result.results || []) {
-            allResults.push({
-              challenge: challenge.name,
-              model: r.model,
-              passed: r.passed,
-              attempts: r.attempts,
-              metrics: r.metrics || r.reactMetrics || r.benchmarks,
-              timestamp: result.timestamp,
-            })
-          }
-        }
-      } catch (e) {
-        // Skip failed loads
-      }
-    }
+    const res = await fetch('/api/results')
+    const data = await res.json()
+
+    // Flatten results: each model result becomes its own row
+    const allResults = data.results.flatMap(run =>
+      run.modelResults.map(r => ({
+        id: run.id,
+        challenge: run.challenge,
+        timestamp: run.timestamp,
+        type: run.type,
+        model: r.model,
+        passed: r.passed,
+        attempts: r.attempts,
+        metrics: r.metrics,
+        error: r.error
+      }))
+    )
+
     state.results = allResults
+
+    // Populate model filter from actual results
+    const models = [...new Set(allResults.map(r => r.model))].sort()
+    clearElement(elements.filterModel)
+    elements.filterModel.appendChild(createElement('option', { value: '', textContent: 'All Models' }))
+    models.forEach(m => {
+      elements.filterModel.appendChild(createElement('option', { value: m, textContent: m }))
+    })
+
     renderResults()
   } catch (e) {
     console.error('Failed to load results:', e)
@@ -411,8 +418,15 @@ function renderResults() {
 
   clearElement(elements.resultsBody)
   filtered.forEach(r => {
-    const row = createElement('tr', {}, [
-      createElement('td', { textContent: r.challenge }),
+    const rowId = `${r.id}-${r.model}`
+    const isExpanded = state.expandedResults.has(rowId)
+
+    // Main result row (clickable)
+    const row = createElement('tr', { className: `result-row ${isExpanded ? 'expanded' : ''}`, 'data-row-id': rowId }, [
+      createElement('td', {}, [
+        createElement('span', { className: 'expand-icon', textContent: isExpanded ? '\u25BC' : '\u25B6' }),
+        document.createTextNode(' ' + r.challenge),
+      ]),
       createElement('td', { textContent: r.model }),
       createElement('td', {}, [
         createElement('span', {
@@ -424,8 +438,98 @@ function renderResults() {
       createElement('td', { textContent: formatMetrics(r.metrics) }),
       createElement('td', { textContent: new Date(r.timestamp).toLocaleDateString() }),
     ])
+    row.style.cursor = 'pointer'
+    row.addEventListener('click', () => toggleResultExpansion(rowId))
     elements.resultsBody.appendChild(row)
+
+    // Expanded detail row (shows when expanded)
+    if (isExpanded) {
+      const detailRow = createElement('tr', { className: 'result-detail-row' }, [
+        createElement('td', { colSpan: '6' }, [
+          renderResultDetail(r),
+        ]),
+      ])
+      elements.resultsBody.appendChild(detailRow)
+    }
   })
+}
+
+function toggleResultExpansion(rowId) {
+  if (state.expandedResults.has(rowId)) {
+    state.expandedResults.delete(rowId)
+  } else {
+    state.expandedResults.add(rowId)
+  }
+  renderResults()
+}
+
+function renderResultDetail(result) {
+  const children = []
+
+  // Metrics section
+  if (result.metrics) {
+    const metricsSection = createElement('div', { className: 'detail-section' }, [
+      createElement('h4', { textContent: 'Performance Metrics' }),
+      createElement('pre', { className: 'detail-metrics', textContent: formatMetricsDetail(result.metrics) }),
+    ])
+    children.push(metricsSection)
+  }
+
+  // Error section (for failed results)
+  if (result.error) {
+    const errorSection = createElement('div', { className: 'detail-section detail-error' }, [
+      createElement('h4', { textContent: 'Error Details' }),
+      createElement('pre', { className: 'detail-error-text', textContent: result.error }),
+    ])
+    children.push(errorSection)
+  }
+
+  // Success info (for passed results without errors)
+  if (result.passed && !result.error) {
+    const successSection = createElement('div', { className: 'detail-section detail-success' }, [
+      createElement('p', { textContent: `Completed successfully in ${result.attempts} attempt(s)` }),
+    ])
+    children.push(successSection)
+  }
+
+  // Re-run button
+  const rerunBtn = createElement('button', { className: 'btn btn-secondary btn-sm', textContent: '\u21BB Re-run this challenge' })
+  rerunBtn.addEventListener('click', (e) => {
+    e.stopPropagation()
+    openCompetitionModal(result.challenge)
+  })
+  children.push(rerunBtn)
+
+  return createElement('div', { className: 'result-detail-content' }, children)
+}
+
+function formatMetricsDetail(metrics) {
+  if (!metrics) return 'No metrics available'
+
+  // Benchmark array (function challenges)
+  if (Array.isArray(metrics)) {
+    return metrics.map(b => {
+      const lines = [`Benchmark: ${b.name || 'default'}`]
+      if (b.hz) lines.push(`  Operations/sec: ${b.hz.toLocaleString(undefined, { maximumFractionDigits: 0 })}`)
+      if (b.mean) lines.push(`  Mean time: ${(b.mean * 1000).toFixed(3)}ms`)
+      if (b.samples) lines.push(`  Samples: ${b.samples}`)
+      return lines.join('\n')
+    }).join('\n\n')
+  }
+
+  // React metrics
+  if (metrics.fps) {
+    const lines = ['FPS Metrics:']
+    if (metrics.fps.p95) lines.push(`  P95 FPS: ${metrics.fps.p95.toFixed(1)}`)
+    if (metrics.fps.average) lines.push(`  Average FPS: ${metrics.fps.average.toFixed(1)}`)
+    if (metrics.fps.min) lines.push(`  Min FPS: ${metrics.fps.min.toFixed(1)}`)
+    if (metrics.renders) lines.push(`  Render count: ${metrics.renders}`)
+    if (metrics.bundle) lines.push(`  Bundle size: ${(metrics.bundle / 1024).toFixed(1)}KB`)
+    return lines.join('\n')
+  }
+
+  // Fallback: pretty-print JSON
+  return JSON.stringify(metrics, null, 2)
 }
 
 function formatMetrics(metrics) {
