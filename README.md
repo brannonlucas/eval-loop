@@ -1,8 +1,13 @@
-# eval-loop
+<p align="center">
+  <img src="assets/logo-generated.png" alt="eval-loop logo" width="200">
+</p>
 
-AI evaluation suite with two modes:
-- **Promptfoo** - Standard prompt evaluations
-- **Compete** - AI code competition harness (models compete to solve coding challenges)
+<h1 align="center">eval-loop</h1>
+
+<p align="center">
+  <strong>Promptfoo</strong> - Standard prompt evaluations<br>
+  <strong>Compete</strong> - AI code competition harness (models compete to solve coding challenges)
+</p>
 
 ## Quick Start (Compete)
 
