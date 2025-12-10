@@ -1,9 +1,14 @@
 /**
- * Vitest Output Parser
+ * Vitest Output Parser (Optimized)
  *
  * Parses vitest JSON output into structured test failure information
  * for the /api/jobs/:id/debug endpoint.
+ *
+ * Optimized for performance using indexOf/substring instead of regex
+ * where possible, and avoiding split() for line-by-line processing.
  */
+
+import { basename } from 'path'
 
 export interface TestFailure {
   testName: string
@@ -18,8 +23,90 @@ export interface ParsedTestOutput {
   numPassed: number
   numFailed: number
   failures: TestFailure[]
-  stdout?: string
 }
+
+const ERROR_RESULT: ParsedTestOutput = {
+  passed: false,
+  numTests: 0,
+  numPassed: 0,
+  numFailed: 0,
+  failures: [{ testName: 'parse', error: 'Invalid JSON input' }],
+}
+
+/**
+ * Extract expected/received values from vitest error messages
+ *
+ * Uses indexOf/substring for performance instead of regex.
+ * Common patterns:
+ * - "Expected: X\nReceived: Y"
+ * - "expected X to be Y" or "expected X to equal Y"
+ */
+function extractExpectedReceived(msg: string): { expected?: string; received?: string } {
+  let expected: string | undefined
+  let received: string | undefined
+
+  // Pattern 1: "Expected: X" / "Received: Y" on separate lines (case-insensitive)
+  let idx = msg.indexOf('Expected:')
+  if (idx === -1) idx = msg.indexOf('expected:')
+  if (idx === -1) idx = msg.indexOf('EXPECTED:')
+  if (idx !== -1) {
+    const start = idx + 9
+    let end = msg.indexOf('\n', start)
+    if (end === -1) end = msg.length
+    expected = msg.substring(start, end).trim()
+  }
+
+  idx = msg.indexOf('Received:')
+  if (idx === -1) idx = msg.indexOf('received:')
+  if (idx === -1) idx = msg.indexOf('RECEIVED:')
+  if (idx !== -1) {
+    const start = idx + 9
+    let end = msg.indexOf('\n', start)
+    if (end === -1) end = msg.length
+    received = msg.substring(start, end).trim()
+  }
+
+  if (expected !== undefined || received !== undefined) {
+    return { expected, received }
+  }
+
+  // Pattern 2: "expected X to be Y" or "expected X to equal Y"
+  idx = msg.indexOf('expected ')
+  if (idx !== -1) {
+    const afterExpected = idx + 9
+    const toBeIdx = msg.indexOf(' to be ', afterExpected)
+    const toEqualIdx = msg.indexOf(' to equal ', afterExpected)
+
+    if (toBeIdx !== -1 && (toEqualIdx === -1 || toBeIdx < toEqualIdx)) {
+      received = msg.substring(afterExpected, toBeIdx).trim()
+      let end = msg.indexOf('\n', toBeIdx + 7)
+      if (end === -1) end = msg.length
+      // Handle end of string - trim whitespace and trailing punctuation
+      let exp = msg.substring(toBeIdx + 7, end).trim()
+      // Remove trailing period/comma if present
+      if (exp.endsWith('.') || exp.endsWith(',')) {
+        exp = exp.slice(0, -1)
+      }
+      expected = exp
+      return { expected, received }
+    }
+
+    if (toEqualIdx !== -1) {
+      received = msg.substring(afterExpected, toEqualIdx).trim()
+      let end = msg.indexOf('\n', toEqualIdx + 10)
+      if (end === -1) end = msg.length
+      let exp = msg.substring(toEqualIdx + 10, end).trim()
+      if (exp.endsWith('.') || exp.endsWith(',')) {
+        exp = exp.slice(0, -1)
+      }
+      expected = exp
+      return { expected, received }
+    }
+  }
+
+  return {}
+}
+
 
 /**
  * Parse vitest JSON reporter output
@@ -31,13 +118,7 @@ export interface ParsedTestOutput {
  */
 export function parseVitestJson(json: unknown): ParsedTestOutput {
   if (!json || typeof json !== 'object') {
-    return {
-      passed: false,
-      numTests: 0,
-      numPassed: 0,
-      numFailed: 0,
-      failures: [{ testName: 'parse', error: 'Invalid JSON input' }],
-    }
+    return ERROR_RESULT
   }
 
   const result = json as Record<string, unknown>
@@ -51,39 +132,53 @@ export function parseVitestJson(json: unknown): ParsedTestOutput {
 
   // Extract failures from testResults
   if (Array.isArray(result.testResults)) {
-    for (const testFile of result.testResults) {
+    for (let i = 0, len = result.testResults.length; i < len; i++) {
+      const testFile = result.testResults[i]
       if (typeof testFile !== 'object' || !testFile) continue
       const file = testFile as Record<string, unknown>
 
       // Suite-level error (e.g., import failure)
       if (file.status === 'failed' && typeof file.message === 'string') {
-        const testName = typeof file.name === 'string' ? extractFileName(file.name) : 'unknown'
-        failures.push({
-          testName,
-          error: file.message,
-        })
+        const testName = typeof file.name === 'string' ? basename(file.name) : 'unknown'
+        const extracted = extractExpectedReceived(file.message)
+        const failure: TestFailure = { testName, error: file.message }
+        if (extracted.expected !== undefined) failure.expected = extracted.expected
+        if (extracted.received !== undefined) failure.received = extracted.received
+        failures.push(failure)
       }
 
       // Individual assertion failures
       if (Array.isArray(file.assertionResults)) {
-        for (const assertion of file.assertionResults) {
+        for (let j = 0, alen = file.assertionResults.length; j < alen; j++) {
+          const assertion = file.assertionResults[j]
           if (typeof assertion !== 'object' || !assertion) continue
           const a = assertion as Record<string, unknown>
 
           if (a.status === 'failed') {
-            const testName = typeof a.fullName === 'string' ? a.fullName : (typeof a.title === 'string' ? a.title : 'unknown')
-            const failureMessages = Array.isArray(a.failureMessages) ? a.failureMessages : []
-            const error = failureMessages.join('\n') || 'Test failed'
+            const testName =
+              typeof a.fullName === 'string'
+                ? a.fullName
+                : typeof a.title === 'string'
+                  ? a.title
+                  : 'unknown'
 
-            // Try to extract expected/received from error message
-            const { expected, received } = extractExpectedReceived(error)
+            let error = 'Test failed'
+            const failureMessages = a.failureMessages
+            if (Array.isArray(failureMessages) && failureMessages.length > 0) {
+              const msgs: string[] = []
+              for (let k = 0; k < failureMessages.length; k++) {
+                if (typeof failureMessages[k] === 'string') {
+                  msgs.push(failureMessages[k])
+                }
+              }
+              if (msgs.length > 0) error = msgs.join('\n')
+            }
 
-            failures.push({
-              testName,
-              error,
-              expected,
-              received,
-            })
+            const extracted = extractExpectedReceived(error)
+            const failure: TestFailure = { testName, error }
+            if (extracted.expected !== undefined) failure.expected = extracted.expected
+            if (extracted.received !== undefined) failure.received = extracted.received
+            failures.push(failure)
           }
         }
       }
@@ -104,8 +199,7 @@ export function parseVitestJson(json: unknown): ParsedTestOutput {
  */
 export function parseVitestJsonString(jsonString: string): ParsedTestOutput {
   try {
-    const json = JSON.parse(jsonString)
-    return parseVitestJson(json)
+    return parseVitestJson(JSON.parse(jsonString))
   } catch {
     return {
       passed: false,
@@ -117,127 +211,3 @@ export function parseVitestJsonString(jsonString: string): ParsedTestOutput {
   }
 }
 
-/**
- * Extract expected/received values from vitest error messages
- *
- * Common patterns:
- * - "Expected: X\nReceived: Y"
- * - "expect(received).toBe(expected)\n\nExpected: X\nReceived: Y"
- */
-function extractExpectedReceived(error: string): { expected?: string; received?: string } {
-  // Pattern 1: Expected: X / Received: Y on separate lines
-  const expectedMatch = error.match(/Expected:\s*(.+?)(?:\n|$)/i)
-  const receivedMatch = error.match(/Received:\s*(.+?)(?:\n|$)/i)
-
-  if (expectedMatch || receivedMatch) {
-    return {
-      expected: expectedMatch?.[1]?.trim(),
-      received: receivedMatch?.[1]?.trim(),
-    }
-  }
-
-  // Pattern 2: "expected X to be Y" / "to equal"
-  const toBeMatch = error.match(/expected\s+(.+?)\s+to\s+(?:be|equal)\s+(.+?)(?:\s|$)/i)
-  if (toBeMatch) {
-    return {
-      expected: toBeMatch[2]?.trim(),
-      received: toBeMatch[1]?.trim(),
-    }
-  }
-
-  return {}
-}
-
-/**
- * Extract just the filename from a full path
- */
-function extractFileName(fullPath: string): string {
-  const parts = fullPath.split('/')
-  return parts[parts.length - 1] || fullPath
-}
-
-/**
- * Parse raw vitest console output (fallback when JSON isn't available)
- *
- * Looks for patterns like:
- * - "FAIL path/to/test.ts"
- * - "✕ test name"
- * - "Error: message"
- */
-export function parseVitestOutput(stdout: string): ParsedTestOutput | null {
-  if (!stdout || typeof stdout !== 'string') {
-    return null
-  }
-
-  const lines = stdout.split('\n')
-  const failures: TestFailure[] = []
-  let numPassed = 0
-  let numFailed = 0
-
-  // Count passed/failed from summary line like "Tests  1 failed | 5 passed"
-  const summaryMatch = stdout.match(/Tests\s+(\d+)\s+failed\s*\|\s*(\d+)\s+passed/i)
-  if (summaryMatch) {
-    numFailed = parseInt(summaryMatch[1], 10)
-    numPassed = parseInt(summaryMatch[2], 10)
-  }
-
-  // Extract individual failures
-  let currentTest: string | null = null
-  let currentError: string[] = []
-
-  for (const line of lines) {
-    // Match failed test names: "✕ test name" or "× test name"
-    const failedTestMatch = line.match(/[✕×]\s+(.+?)(?:\s+\(\d+\s*ms\))?$/)
-    if (failedTestMatch) {
-      // Save previous failure if exists
-      if (currentTest && currentError.length > 0) {
-        failures.push({
-          testName: currentTest,
-          error: currentError.join('\n').trim(),
-        })
-      }
-      currentTest = failedTestMatch[1].trim()
-      currentError = []
-      continue
-    }
-
-    // Collect error lines after a failed test
-    if (currentTest) {
-      // Stop collecting when we hit another test or section
-      if (line.match(/^[✓✕×]\s+/) || line.match(/^Tests\s+/)) {
-        if (currentError.length > 0) {
-          failures.push({
-            testName: currentTest,
-            error: currentError.join('\n').trim(),
-          })
-        }
-        currentTest = null
-        currentError = []
-      } else if (line.trim()) {
-        currentError.push(line)
-      }
-    }
-  }
-
-  // Don't forget the last one
-  if (currentTest && currentError.length > 0) {
-    failures.push({
-      testName: currentTest,
-      error: currentError.join('\n').trim(),
-    })
-  }
-
-  // If we found any structured data, return it
-  if (numPassed > 0 || numFailed > 0 || failures.length > 0) {
-    return {
-      passed: numFailed === 0,
-      numTests: numPassed + numFailed,
-      numPassed,
-      numFailed,
-      failures,
-      stdout,
-    }
-  }
-
-  return null
-}

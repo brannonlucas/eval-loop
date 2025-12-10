@@ -1,6 +1,7 @@
 import { spawn } from 'child_process'
 import { join } from 'path'
-import { existsSync } from 'fs'
+import { existsSync, readFileSync, unlinkSync } from 'fs'
+import os from 'os'
 
 export interface TestResult {
   passed: boolean
@@ -71,17 +72,25 @@ export async function runTests(
       stderr += data.toString()
     })
 
-    proc.on('close', (code) => {
+    proc.on('close', () => {
       const duration = Date.now() - startTime
       const fullOutput = stdout + stderr
       const rawOutput = captureFullOutput ? fullOutput : undefined
 
-      if (code === 0) {
-        resolve({ passed: true, errors: [], duration, rawOutput })
-      } else {
-        // Parse errors from output
-        const errors = parseTestErrors(fullOutput)
-        resolve({ passed: false, errors, duration, rawOutput })
+      try {
+        // Parse JSON output from vitest reporter
+        const json = JSON.parse(stdout)
+        const passed = json.success === true
+        const errors = extractErrorsFromJson(json)
+        resolve({ passed, errors, duration, rawOutput })
+      } catch {
+        // Fallback if JSON parsing fails
+        resolve({
+          passed: false,
+          errors: [fullOutput.slice(0, 2000)],
+          duration,
+          rawOutput,
+        })
       }
     })
 
@@ -96,93 +105,71 @@ export async function runTests(
   })
 }
 
+// Extract error messages from vitest JSON reporter output
+function extractErrorsFromJson(json: {
+  testResults?: Array<{
+    assertionResults?: Array<{
+      status: string
+      failureMessages?: string[]
+    }>
+  }>
+}): string[] {
+  const errors: string[] = []
+
+  for (const file of json.testResults || []) {
+    for (const test of file.assertionResults || []) {
+      if (test.status === 'failed' && test.failureMessages) {
+        errors.push(...test.failureMessages)
+      }
+    }
+  }
+
+  return errors.slice(0, 20) // Limit error count
+}
+
 export async function runBenchmarks(challenge: string): Promise<BenchResult[]> {
   return new Promise((resolve) => {
     const specPath = findBenchFile(challenge)
+    const outputFile = join(os.tmpdir(), `bench-${Date.now()}-${Math.random().toString(36).slice(2)}.json`)
 
-    const proc = spawn('npx', ['vitest', 'bench', specPath, '--reporter=json'], {
+    // Use --outputJson flag to get structured JSON output directly
+    const proc = spawn('npx', ['vitest', 'bench', specPath, '--run', `--outputJson=${outputFile}`], {
       cwd: process.cwd(),
       stdio: ['pipe', 'pipe', 'pipe'],
     })
 
-    let stdout = ''
-
-    proc.stdout.on('data', (data) => {
-      stdout += data.toString()
-    })
-
     proc.on('close', () => {
       try {
-        const results = parseBenchResults(stdout)
+        const json = JSON.parse(readFileSync(outputFile, 'utf-8'))
+        const results: BenchResult[] = []
+
+        for (const file of json.files || []) {
+          for (const group of file.groups || []) {
+            for (const bench of group.benchmarks || []) {
+              results.push({
+                name: bench.name,
+                hz: bench.hz,
+                mean: bench.mean,
+                p75: bench.p75,
+                p99: bench.p99,
+              })
+            }
+          }
+        }
+
+        unlinkSync(outputFile)
         resolve(results)
       } catch {
+        if (existsSync(outputFile)) unlinkSync(outputFile)
         resolve([])
       }
     })
 
     proc.on('error', () => {
+      if (existsSync(outputFile)) unlinkSync(outputFile)
       resolve([])
     })
   })
 }
 
-function parseTestErrors(output: string): string[] {
-  const errors: string[] = []
 
-  // Look for FAIL lines and assertion errors
-  const lines = output.split('\n')
-  let capturing = false
-
-  for (const line of lines) {
-    if (line.includes('FAIL') || line.includes('AssertionError') || line.includes('Error:')) {
-      capturing = true
-    }
-    if (capturing) {
-      errors.push(line)
-      if (line.trim() === '' && errors.length > 1) {
-        capturing = false
-      }
-    }
-  }
-
-  // If no structured errors found, return raw output
-  if (errors.length === 0 && output.includes('fail')) {
-    return [output.slice(0, 2000)] // Truncate to avoid huge feedback
-  }
-
-  return errors.slice(0, 20) // Limit error lines
-}
-
-function parseBenchResults(output: string): BenchResult[] {
-  try {
-    // Try to parse JSON output
-    const json = JSON.parse(output)
-    if (json.testResults) {
-      return json.testResults.flatMap((file: { benchmarks?: BenchResult[] }) =>
-        file.benchmarks || []
-      )
-    }
-  } catch {
-    // Fallback: parse text output
-    const results: BenchResult[] = []
-    const lines = output.split('\n')
-
-    for (const line of lines) {
-      // Match lines like: "sort 10k items  1,234 ops/sec"
-      const match = line.match(/(.+?)\s+([\d,]+)\s+ops\/sec/)
-      if (match) {
-        results.push({
-          name: match[1].trim(),
-          hz: parseFloat(match[2].replace(/,/g, '')),
-          mean: 0,
-          p75: 0,
-          p99: 0,
-        })
-      }
-    }
-
-    return results
-  }
-
-  return []
-}
