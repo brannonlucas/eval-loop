@@ -52,17 +52,36 @@ bun run compete -c fastest-sort --leaderboard
 bun run compete --help
 ```
 
-### Web Dashboard
+### Web Dashboard & API Server
 
 ```bash
 bun compete/server/index.ts
-# Open http://localhost:3456
+# Dashboard: http://localhost:3456
+# API Docs:  http://localhost:3456/api/docs
 ```
 
-The dashboard provides:
+The server provides both a web dashboard and a REST API for remote integrations.
+
+**Dashboard features:**
 - Real-time competition progress via SSE
 - Results history and leaderboards
 - Click any result to see full error details and re-run
+
+**API endpoints:**
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/compete` | POST | Run competition (SSE stream) |
+| `/api/validate` | POST | Test code against a challenge |
+| `/api/generate` | POST | Generate code without competing |
+| `/api/challenges` | GET | List available challenges |
+| `/api/challenges` | POST | Create ad-hoc challenge |
+| `/api/jobs/:id` | GET | Poll job status |
+| `/api/results` | GET | Query historical results |
+| `/api/schema` | GET | OpenAPI spec (for AI agents) |
+| `/api/docs` | GET | Swagger UI documentation |
+
+See [docs/EXAMPLES.md](./docs/EXAMPLES.md) for client code in JavaScript, Python, and cURL.
 
 ### Available Models
 
