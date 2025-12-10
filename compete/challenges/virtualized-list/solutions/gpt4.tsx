@@ -1,6 +1,6 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
-const VirtualizedList = ({
+export default function VirtualizedList({
   items,
   itemHeight = 40,
   containerHeight = 600,
@@ -8,56 +8,51 @@ const VirtualizedList = ({
   items: string[];
   itemHeight?: number;
   containerHeight?: number;
-}): JSX.Element => {
+}): JSX.Element {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [startIndex, setStartIndex] = useState(0);
+  const [scrollTop, setScrollTop] = useState(0);
 
   const totalHeight = items.length * itemHeight;
-  const buffer = Math.ceil(containerHeight / itemHeight); // Buffer to render extra items
-  const visibleCount = Math.ceil(containerHeight / itemHeight) + buffer * 2;
-
-  const handleScroll = useCallback(() => {
-    if (containerRef.current) {
-      const scrollY = containerRef.current.scrollTop;
-      setStartIndex(Math.floor(scrollY / itemHeight));
-    }
-  }, [itemHeight]);
+  const itemsInView = Math.ceil(containerHeight / itemHeight);
+  const bufferItems = 5;
+  const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - bufferItems);
+  const endIndex = Math.min(
+    items.length,
+    startIndex + itemsInView + bufferItems * 2
+  );
 
   useEffect(() => {
-    const current = containerRef.current;
-    current?.addEventListener('scroll', handleScroll);
-    return () => current?.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
-
-  const visibleItems = items.slice(
-    Math.max(0, startIndex - buffer),
-    Math.min(items.length, startIndex + visibleCount)
-  );
+    const onScroll = () => {
+      if (containerRef.current) {
+        setScrollTop(containerRef.current.scrollTop);
+      }
+    };
+    const container = containerRef.current;
+    container?.addEventListener('scroll', onScroll);
+    return () => container?.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <div
       ref={containerRef}
       style={{
-        overflowY: 'auto',
+        position: 'relative',
         height: containerHeight,
-        contain: 'strict',
+        overflow: 'auto',
+        willChange: 'transform',
       }}
     >
       <div style={{ height: totalHeight, position: 'relative' }}>
-        {visibleItems.map((item, idx) => (
+        {items.slice(startIndex, endIndex).map((item, index) => (
           <div
-            key={startIndex + idx}
+            key={startIndex + index}
             style={{
               position: 'absolute',
-              top: (startIndex + idx) * itemHeight,
-              left: 0,
-              right: 0,
+              top: (startIndex + index) * itemHeight,
+              width: '100%',
               height: itemHeight,
-              transform: 'translateZ(0)',
-              display: 'flex',
-              alignItems: 'center',
-              padding: '0 16px',
               boxSizing: 'border-box',
+              contain: 'strict',
             }}
           >
             {item}
@@ -66,6 +61,4 @@ const VirtualizedList = ({
       </div>
     </div>
   );
-};
-
-export default VirtualizedList;
+}

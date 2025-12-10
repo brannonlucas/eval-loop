@@ -1,3 +1,3 @@
 export function solution(arr: number[]): number[] {
-    return [...arr].sort((a, b) => a - b);
+  return arr.slice().sort((a, b) => a - b);
 }

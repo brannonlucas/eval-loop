@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react';
 
 export default function VirtualizedList({
   items,
@@ -8,51 +8,52 @@ export default function VirtualizedList({
   items: string[]
   itemHeight?: number
   containerHeight?: number
-}) {
-  const [scrollTop, setScrollTop] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
-  
-  const totalHeight = items.length * itemHeight
-  const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - 2)
+}): JSX.Element {
+  const [scrollTop, setScrollTop] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const totalHeight = items.length * itemHeight;
+  const startIndex = Math.floor(scrollTop / itemHeight);
   const endIndex = Math.min(
-    items.length,
-    Math.ceil((scrollTop + containerHeight) / itemHeight) + 2
-  )
-  
-  useLayoutEffect(() => {
-    const container = containerRef.current
-    if (!container) return
-    
-    const handleScroll = () => setScrollTop(container.scrollTop)
-    container.addEventListener('scroll', handleScroll, { passive: true })
-    return () => container.removeEventListener('scroll', handleScroll)
-  }, [])
-  
+    items.length - 1,
+    Math.floor((scrollTop + containerHeight) / itemHeight) + 1
+  );
+
+  const visibleItems = [];
+  for (let i = startIndex; i <= endIndex; i++) {
+    visibleItems.push(
+      <div
+        key={i}
+        style={{
+          position: 'absolute',
+          top: i * itemHeight,
+          height: itemHeight,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          alignItems: 'center',
+          paddingLeft: 16,
+          contain: 'strict'
+        }}
+      >
+        {items[i]}
+      </div>
+    );
+  }
+
   return (
     <div
       ref={containerRef}
       style={{
         height: containerHeight,
         overflow: 'auto',
-        contain: 'strict'
+        position: 'relative'
       }}
+      onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
     >
       <div style={{ height: totalHeight, position: 'relative' }}>
-        {items.slice(startIndex, endIndex).map((item, i) => (
-          <div
-            key={startIndex + i}
-            style={{
-              position: 'absolute',
-              top: (startIndex + i) * itemHeight,
-              height: itemHeight,
-              width: '100%',
-              transform: 'translateZ(0)'
-            }}
-          >
-            {item}
-          </div>
-        ))}
+        {visibleItems}
       </div>
     </div>
-  )
+  );
 }
