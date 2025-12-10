@@ -1,0 +1,98 @@
+/**
+ * Extract source code from LLM responses
+ * @param response - The full LLM response text
+ * @returns The extracted code (trimmed)
+ */
+export function extractCode(response: string): string {
+  if (!response) return '';
+  
+  const trimmed = response.trim();
+  if (!trimmed) return '';
+  
+  const FENCE = '\x60\x60\x60';
+  
+  // Find ALL code blocks first, then prioritize
+  const blocks: Array<{start: number, content: string, isTyped: boolean}> = [];
+  let searchPos = 0;
+  
+  while (true) {
+    const fencePos = trimmed.indexOf(FENCE, searchPos);
+    if (fencePos === -1) break;
+    
+    // Find end of opening fence line
+    let lineEnd = fencePos + 3;
+    while (lineEnd < trimmed.length && trimmed[lineEnd] !== '\n') {
+      lineEnd++;
+    }
+    
+    if (lineEnd >= trimmed.length) break;
+    
+    // Extract language tag
+    const langTag = trimmed.slice(fencePos + 3, lineEnd).trim().toLowerCase();
+    const isTyped = langTag === 'typescript' || langTag === 'ts' || langTag === 'tsx' || 
+                   langTag === 'javascript' || langTag === 'jsx' || langTag === 'js';
+    
+    // Find closing fence
+    const contentStart = lineEnd + 1;
+    const closeFence = trimmed.indexOf(FENCE, contentStart);
+    if (closeFence === -1) break;
+    
+    const content = trimmed.slice(contentStart, closeFence).trim();
+    if (content) {
+      blocks.push({start: fencePos, content, isTyped});
+    }
+    
+    searchPos = closeFence + 3;
+  }
+  
+  // Return first typed block if any exist
+  for (const block of blocks) {
+    if (block.isTyped) return block.content;
+  }
+  
+  // Return first generic block if any exist
+  if (blocks.length > 0) {
+    return blocks[0].content;
+  }
+  
+  // Check if response starts with code indicators
+  const codeStarts = ['import', 'export', 'const', 'let', 'var', 'function', 'class', 'interface', 'type', 'async', '//', '/*'];
+  for (const start of codeStarts) {
+    if (trimmed.startsWith(start)) {
+      return trimmed;
+    }
+  }
+  
+  // Search for code after prose (optimized line iteration)
+  const lineStarts = ['import', 'export', 'const', 'let', 'var', 'function', 'class', 'interface', 'type', '//', '/*'];
+  let pos = 0;
+  while (pos < trimmed.length) {
+    // Find start of next line
+    const lineStart = pos;
+    
+    // Find end of current line
+    let lineEnd = pos;
+    while (lineEnd < trimmed.length && trimmed[lineEnd] !== '\n') {
+      lineEnd++;
+    }
+    
+    // Check if this line starts with code
+    let foundCode = false;
+    for (const start of lineStarts) {
+      if (trimmed.startsWith(start, lineStart)) {
+        foundCode = true;
+        break;
+      }
+    }
+    
+    if (foundCode) {
+      return trimmed.slice(lineStart).trim();
+    }
+    
+    // Move to next line
+    pos = lineEnd + 1;
+  }
+  
+  // Fallback: return trimmed response
+  return trimmed;
+}

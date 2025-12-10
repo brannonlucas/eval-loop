@@ -1,0 +1,12 @@
+{
+  "type": "function",
+  "externalRepo": {
+    "path": "/Users/brannonlucas/Projects/my-truth-app",
+    "testPath": "lib/api/__tests__/error-handler.test.ts",
+    "solutionPath": "lib/api/error-handler.ts",
+    "copyPaths": [
+      "lib/logger.ts",
+      "lib/game/error-recovery.ts"
+    ]
+  }
+}

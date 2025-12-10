@@ -1,0 +1,6 @@
+{
+  "type": "function",
+  "name": "Benchmark Output Parser",
+  "generationTimeout": 90000,
+  "maxRetries": 3
+}

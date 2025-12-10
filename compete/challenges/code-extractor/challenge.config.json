@@ -1,0 +1,6 @@
+{
+  "type": "function",
+  "name": "Code Extractor Optimizer",
+  "generationTimeout": 90000,
+  "maxRetries": 3
+}
