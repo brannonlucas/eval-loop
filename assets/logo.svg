@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Gradient for the loop -->
+    <linearGradient id="loopGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1"/>
+      <stop offset="50%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#a855f7"/>
+    </linearGradient>
+
+    <!-- Gradient for accents -->
+    <linearGradient id="accentGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#22d3ee"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle (optional, can be removed for transparency) -->
+  <circle cx="100" cy="100" r="95" fill="#0f172a"/>
+
+  <!-- Outer evaluation loop - infinity/cycle shape -->
+  <path
+    d="M 50 100
+       C 50 60, 85 60, 100 80
+       C 115 60, 150 60, 150 100
+       C 150 140, 115 140, 100 120
+       C 85 140, 50 140, 50 100"
+    fill="none"
+    stroke="url(#loopGradient)"
+    stroke-width="8"
+    stroke-linecap="round"
+  />
+
+  <!-- Left node - Model A -->
+  <circle cx="60" cy="100" r="18" fill="url(#loopGradient)"/>
+  <text x="60" y="106" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-weight="bold" font-size="16">A</text>
+
+  <!-- Right node - Model B -->
+  <circle cx="140" cy="100" r="18" fill="url(#loopGradient)"/>
+  <text x="140" y="106" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-weight="bold" font-size="16">B</text>
+
+  <!-- Center checkmark/eval indicator -->
+  <circle cx="100" cy="100" r="14" fill="url(#accentGradient)"/>
+  <path
+    d="M 93 100 L 98 105 L 108 94"
+    fill="none"
+    stroke="white"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Motion arrows on the loop -->
+  <polygon points="82,68 88,75 80,77" fill="url(#loopGradient)"/>
+  <polygon points="118,132 112,125 120,123" fill="url(#loopGradient)"/>
+</svg>
