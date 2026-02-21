@@ -44,3 +44,10 @@ compete/debug/
 # External repo references (local paths)
 compete/challenges/.external.json
 compete/challenges/*/challenge.config.json
+
+# Generated solution files (overwritten each competition run)
+compete/challenges/*/solution.ts
+compete/challenges/*/solution.tsx
+
+# Ad-hoc challenges (generated via API, not curated)
+compete/challenges/.adhoc/
