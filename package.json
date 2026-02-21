@@ -31,6 +31,8 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
     "@google/generative-ai": "^0.24.1",
+    "@resvg/resvg-js": "^2.6.2",
+    "@resvg/resvg-wasm": "^2.6.2",
     "@vitejs/plugin-react": "^5.1.1",
     "openai": "^6.10.0",
     "promptfoo": "^0.119.14",

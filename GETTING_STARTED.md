@@ -134,7 +134,7 @@ bun run compete -c fastest-sort --leaderboard
 Start the dashboard server:
 
 ```bash
-bun run serve
+bun run server
 ```
 
 Open http://localhost:3456 in your browser to see:

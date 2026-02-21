@@ -40,3 +40,7 @@ outputs/
 
 # Debug artifacts
 compete/debug/
+
+# External repo references (local paths)
+compete/challenges/.external.json
+compete/challenges/*/challenge.config.json
