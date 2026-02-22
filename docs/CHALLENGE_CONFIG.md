@@ -72,6 +72,8 @@ Display name for results and dashboard. Defaults to the directory name.
 
 Maximum time (in milliseconds) to wait for AI to generate a solution.
 
+> **Note**: This field is recognized in the config schema but not yet enforced by the competition engine. AI generation calls currently have no timeout.
+
 | Type | Default |
 |------|---------|
 | `function` | 60000 (1 minute) |
@@ -86,6 +88,8 @@ Maximum time (in milliseconds) to wait for AI to generate a solution.
 ### `maxRetries` (optional)
 
 Maximum number of retry attempts when tests fail. Each retry includes the previous error as feedback.
+
+> **Note**: This field is recognized in the config schema but not yet used by the competition engine. The attempt limit is controlled by the CLI `-a` flag or API `maxAttempts` parameter (default: 5).
 
 **Default**: 3
 
@@ -224,7 +228,4 @@ bun run compete init my-challenge --type=function
 
 # Link external repo (generates config automatically)
 bun run compete link /path/to/repo my-challenge
-
-# Validate challenge without running
-bun run compete -c my-challenge --validate
 ```

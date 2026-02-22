@@ -25,6 +25,7 @@ Returns server status and active job count.
 {
   "status": "ok",
   "version": "1.0.0",
+  "commit": "a1b2c3d",
   "uptime": 12345,
   "activeJobs": 0
 }
@@ -203,7 +204,7 @@ Generate code with a single AI model (no testing).
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `model` | string | Yes | `sonnet`, `opus`, `gpt4`, or `gemini` |
+| `model` | string | Yes | Any model ID from `compete/models.json` |
 | `challenge` | string | Yes* | Challenge name (*or provide `prompt`) |
 | `prompt` | string | No | Custom prompt (alternative to challenge) |
 | `feedback` | string | No | Error feedback for retry attempts |
@@ -245,8 +246,8 @@ Run a full competition with multiple AI models. Returns Server-Sent Events for r
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `challenge` | string | Yes | Challenge name |
-| `models` | string[] | No | Models to compete (default: all) |
-| `maxAttempts` | number | No | Max attempts per model (default: 3) |
+| `models` | string[] | No | Models to compete (default: `["sonnet", "gpt4"]`) |
+| `maxAttempts` | number | No | Max attempts per model (default: 5) |
 | `stream` | boolean | No | Use SSE streaming (default: true) |
 | `debug` | boolean | No | Save debug artifacts (solutions, vitest output) |
 | `refinementRound` | boolean | No | Enable refinement round where models improve winning solution |
@@ -292,7 +293,7 @@ If `stream: false`, returns a job ID for polling:
 ```json
 {
   "jobId": "abc123",
-  "status": "pending"
+  "status": "queued"
 }
 ```
 
@@ -323,7 +324,7 @@ Poll job status (for non-SSE clients).
 }
 ```
 
-**Status Values:** `pending`, `running`, `completed`, `failed`, `cancelled`
+**Status Values:** `queued`, `running`, `completed`, `failed`, `cancelled`
 
 ---
 
@@ -418,6 +419,39 @@ Get detailed debug information for a completed or failed job. Includes full solu
 
 - `400` - Job is still running (must wait for completion)
 - `404` - Job not found or no debug info available
+
+---
+
+### List All Jobs
+
+```bash
+GET /api/jobs
+```
+
+Returns all jobs (queued, running, completed, failed).
+
+```json
+{
+  "jobs": [
+    {
+      "id": "abc123",
+      "status": "completed",
+      "config": { "challenge": "fastest-sort", "models": ["sonnet", "gpt4"] },
+      "createdAt": 1705312200000
+    }
+  ]
+}
+```
+
+---
+
+### Swagger UI
+
+```bash
+GET /api/docs
+```
+
+Interactive API documentation powered by Swagger UI. Browse and test all endpoints in your browser.
 
 ---
 

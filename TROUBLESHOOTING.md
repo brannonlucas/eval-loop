@@ -209,15 +209,19 @@ rm -rf compete/.tmp/*
 
 ### Enable debug output
 
+Use the API server's debug mode to capture full solutions, vitest output, and workspace state:
+
 ```bash
-# Set environment variable
-DEBUG=1 bun run compete -c my-challenge
+# Via API (start server first with: bun run server)
+curl -X POST http://localhost:3456/api/compete \
+  -H 'Content-Type: application/json' \
+  -d '{"challenge": "my-challenge", "debug": true}'
 ```
 
 ### Check debug artifacts
 
-After a failed run, check:
-- `compete/debug/` - Vitest JSON output
+After a debug run, check:
+- `compete/debug/` - Solutions, vitest JSON output, and results per model
 - `compete/results/` - Competition results with error messages
 
 ### View full error in dashboard

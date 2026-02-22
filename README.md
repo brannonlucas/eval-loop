@@ -76,7 +76,10 @@ The server provides both a web dashboard and a REST API for remote integrations.
 | `/api/generate` | POST | Generate code without competing |
 | `/api/challenges` | GET | List available challenges |
 | `/api/challenges` | POST | Create ad-hoc challenge |
+| `/api/jobs` | GET | List all jobs |
 | `/api/jobs/:id` | GET | Poll job status |
+| `/api/jobs/:id` | DELETE | Cancel a running job |
+| `/api/jobs/:id/debug` | GET | Debug info (solutions, test output) |
 | `/api/results` | GET | Query historical results |
 | `/api/schema` | GET | OpenAPI spec (for AI agents) |
 | `/api/docs` | GET | Swagger UI documentation |
@@ -85,12 +88,16 @@ See [docs/EXAMPLES.md](./docs/EXAMPLES.md) for client code in JavaScript, Python
 
 ### Available Models
 
+Models are configured in [`compete/models.json`](./compete/models.json). Default models:
+
 | Model | Provider | Env Variable |
 |-------|----------|--------------|
 | `sonnet` | Anthropic (Claude Sonnet 4) | `ANTHROPIC_API_KEY` |
 | `opus` | Anthropic (Claude Opus 4.5) | `ANTHROPIC_API_KEY` |
 | `gpt4` | OpenAI (GPT-4o) | `OPENAI_API_KEY` |
 | `gemini` | Google (Gemini 1.5 Pro) | `GOOGLE_API_KEY` |
+
+To add a new model, edit `compete/models.json` — no code changes needed.
 
 ### Challenge Types
 
