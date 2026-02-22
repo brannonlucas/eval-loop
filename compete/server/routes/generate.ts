@@ -5,7 +5,7 @@
  */
 
 import type { GenerateRequest, GenerateResponse } from '../types'
-import { generateSolution, type ModelId } from '../../lib/ai-generator'
+import { generateSolution, getModelIds } from '../../lib/ai-generator'
 
 function corsHeaders(): HeadersInit {
   return {
@@ -23,8 +23,6 @@ function json(data: unknown, status = 200): Response {
   })
 }
 
-const VALID_MODELS: ModelId[] = ['sonnet', 'opus', 'gpt4', 'gemini']
-
 export async function handleGenerate(body: unknown): Promise<Response> {
   const req = body as GenerateRequest
 
@@ -32,8 +30,9 @@ export async function handleGenerate(body: unknown): Promise<Response> {
     return json({ error: 'model is required' }, 400)
   }
 
-  if (!VALID_MODELS.includes(req.model)) {
-    return json({ error: `Invalid model. Valid options: ${VALID_MODELS.join(', ')}` }, 400)
+  const validModels = await getModelIds()
+  if (!validModels.includes(req.model)) {
+    return json({ error: `Invalid model. Valid options: ${validModels.join(', ')}` }, 400)
   }
 
   if (!req.challenge && !req.prompt) {

@@ -400,8 +400,8 @@ export const openApiSchema = {
       },
       ModelId: {
         type: 'string',
-        enum: ['sonnet', 'opus', 'gpt4', 'gemini'],
-        description: 'Available AI models',
+        enum: [] as string[], // Populated at startup from models.json
+        description: 'Available AI models (configured in compete/models.json)',
       },
       ChallengeType: {
         type: 'string',

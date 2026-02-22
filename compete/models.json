@@ -1,0 +1,29 @@
+{
+  "sonnet": {
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-20250514",
+    "envVar": "ANTHROPIC_API_KEY",
+    "keyUrl": "https://console.anthropic.com/",
+    "maxTokens": 4096
+  },
+  "opus": {
+    "provider": "anthropic",
+    "model": "claude-opus-4-5-20251101",
+    "envVar": "ANTHROPIC_API_KEY",
+    "keyUrl": "https://console.anthropic.com/",
+    "maxTokens": 4096
+  },
+  "gpt4": {
+    "provider": "openai",
+    "model": "gpt-4o",
+    "envVar": "OPENAI_API_KEY",
+    "keyUrl": "https://platform.openai.com/api-keys",
+    "maxTokens": 4096
+  },
+  "gemini": {
+    "provider": "google",
+    "model": "gemini-1.5-pro",
+    "envVar": "GOOGLE_API_KEY",
+    "keyUrl": "https://makersuite.google.com/app/apikey"
+  }
+}

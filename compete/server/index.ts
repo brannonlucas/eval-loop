@@ -19,6 +19,7 @@ import { handleDocs } from './routes/docs'
 import { handleStatic, isStaticPath } from './routes/static'
 import { jobManager } from './jobs/manager'
 import { openApiSchema } from './schema'
+import { getModelIds } from '../lib/ai-generator'
 import { spawnSync } from 'child_process'
 
 const PORT = parseInt(process.env.PORT || '3456', 10)
@@ -192,6 +193,11 @@ async function handleRequest(req: Request): Promise<Response> {
     return error(message, 500)
   }
 }
+
+// Populate OpenAPI schema with model IDs from config
+const modelIds = await getModelIds()
+const schemas = (openApiSchema as any).components?.schemas
+if (schemas?.ModelId) schemas.ModelId.enum = modelIds
 
 // Start server
 const server = Bun.serve({

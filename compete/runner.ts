@@ -2,7 +2,8 @@
 import { parseArgs } from 'util'
 import { readFile, writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
-import { generateSolution, validateApiKeys, type ModelId } from './lib/ai-generator'
+import { generateSolution, validateApiKeys, getModelIds, getModelConfig } from './lib/ai-generator'
+import type { ModelId } from './lib/ai-generator'
 import { runTests, runBenchmarks, type TestRunOptions } from './lib/vitest-runner'
 import {
   recordResult,
@@ -60,7 +61,7 @@ async function runCompetition(config: CompetitionConfig): Promise<CompetitionRes
   assertChallengeValid(challengePath, challengeConfig)
 
   // Validate API keys for all requested models before starting
-  const missingKeys = validateApiKeys(models)
+  const missingKeys = await validateApiKeys(models)
   if (missingKeys.length > 0) {
     console.error('\nMissing API keys:')
     for (const key of missingKeys) {
@@ -537,6 +538,14 @@ Run 'bun run compete link --help' for full documentation.
   })
 
   if (values.help) {
+    // Build dynamic model list from config
+    const modelIds = await getModelIds()
+    const modelLines: string[] = []
+    for (const id of modelIds) {
+      const cfg = await getModelConfig(id)
+      if (cfg) modelLines.push(`  ${id.padEnd(8)} ${cfg.model} (${cfg.provider}) - requires ${cfg.envVar}`)
+    }
+
     console.log(`
 AI Code Competition Runner
 
@@ -561,11 +570,8 @@ Options:
   -l, --leaderboard        Show leaderboard for challenge
   -h, --help               Show this help
 
-Available models:
-  sonnet   Claude Sonnet 4 (Anthropic) - requires ANTHROPIC_API_KEY
-  opus     Claude Opus 4.5 (Anthropic) - requires ANTHROPIC_API_KEY
-  gpt4     GPT-4o (OpenAI) - requires OPENAI_API_KEY
-  gemini   Gemini 1.5 Pro (Google) - requires GOOGLE_API_KEY
+Available models (configure in compete/models.json):
+${modelLines.join('\n')}
 
 Challenge Types:
   function         Algorithm challenges with vitest benchmarks (ops/sec)

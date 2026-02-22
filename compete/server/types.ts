@@ -2,13 +2,12 @@
  * API Request/Response Types
  */
 
-import type { ModelId } from '../lib/ai-generator'
 import type { ReactPerfMetrics, BundleStats } from '../lib/react-metrics'
 
 // Competition
 export interface CompeteRequest {
   challenge: string
-  models?: ModelId[]
+  models?: string[]
   maxAttempts?: number
   stream?: boolean
   debug?: boolean // Enables debug artifacts: saves solutions, vitest output, preserves workspace
@@ -47,7 +46,7 @@ export interface ValidateResponse {
 
 // Generation
 export interface GenerateRequest {
-  model: ModelId
+  model: string
   challenge: string
   prompt?: string
   feedback?: string
@@ -55,7 +54,7 @@ export interface GenerateRequest {
 
 export interface GenerateResponse {
   code: string
-  model: ModelId
+  model: string
   duration: number
 }
 

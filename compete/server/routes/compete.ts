@@ -10,7 +10,7 @@ import { join } from 'path'
 import type { CompeteRequest } from '../types'
 import { createSSEStream, sseHeaders } from '../sse/stream'
 import { jobManager } from '../jobs/manager'
-import { generateSolution, type ModelId } from '../../lib/ai-generator'
+import { generateSolution } from '../../lib/ai-generator'
 import { runTests, runBenchmarks, type TestRunOptions } from '../../lib/vitest-runner'
 import { loadChallengeConfig, isReactChallenge, type ChallengeConfig } from '../../lib/challenge-config'
 import { runPerfTest } from '../../lib/playwright-runner'
@@ -29,7 +29,7 @@ import {
 } from '../../lib/refinement-prompt'
 import { parseVitestJsonString, type ParsedTestOutput } from '../../lib/vitest-parser'
 
-const DEFAULT_MODELS: ModelId[] = ['sonnet', 'gpt4']
+const DEFAULT_MODELS = ['sonnet', 'gpt4']
 const DEFAULT_MAX_ATTEMPTS = 5
 const DEBUG_DIR = join(process.cwd(), 'compete/debug')
 

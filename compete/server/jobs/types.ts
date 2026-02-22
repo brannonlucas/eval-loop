@@ -2,7 +2,6 @@
  * Job Queue Types
  */
 
-import type { ModelId } from '../../lib/ai-generator'
 import type { SSEStream } from '../sse/stream'
 import type { ParsedTestOutput } from '../../lib/vitest-parser'
 
@@ -22,7 +21,7 @@ export interface AttemptRecord {
 
 export interface JobConfig {
   challenge: string
-  models: ModelId[]
+  models: string[]
   maxAttempts: number
   debug?: boolean
   refinementRound?: boolean
